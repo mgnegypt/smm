@@ -1,0 +1,20 @@
+------- Nicex SMM Panel Script Installation---------
+
+1.Create database via cPanel and import the provided .sql file via Phpmyadmin
+
+2. Extract [Files -  Nicex SMM Panel Script.zip] to public_html
+
+3.Database credentails needs to be pasted inside public_html/system/config_database.php.php
+
+
+-------------------------------------
+
+Default login details:
+
+yourwebsite.com/admin
+
+
+username: admin@admin.com
+password: admin@2020
+
+-------------------------------------
