@@ -1,0 +1,52 @@
+:root {
+  --ui-color-bg: #070b1a;
+  --ui-color-bg-elevated: #0d1327;
+  --ui-color-surface: rgba(16, 25, 52, 0.72);
+  --ui-color-surface-strong: rgba(22, 33, 64, 0.92);
+  --ui-color-border: rgba(140, 169, 255, 0.25);
+  --ui-color-text: #eef3ff;
+  --ui-color-text-muted: #9ea9cf;
+  --ui-color-primary: #73a7ff;
+  --ui-color-primary-strong: #538df7;
+  --ui-color-success: #41d7a8;
+  --ui-color-warning: #ffca6d;
+  --ui-color-danger: #ff708f;
+  --ui-color-info: #64c6ff;
+
+  --ui-space-1: 0.25rem;
+  --ui-space-2: 0.5rem;
+  --ui-space-3: 0.75rem;
+  --ui-space-4: 1rem;
+  --ui-space-5: 1.5rem;
+  --ui-space-6: 2rem;
+  --ui-space-7: 2.5rem;
+
+  --ui-radius-sm: 8px;
+  --ui-radius-md: 12px;
+  --ui-radius-lg: 18px;
+  --ui-radius-pill: 999px;
+
+  --ui-shadow-sm: 0 8px 24px rgba(2, 6, 23, 0.24);
+  --ui-shadow-md: 0 14px 34px rgba(2, 6, 23, 0.34);
+  --ui-shadow-glow: 0 0 0 1px rgba(140, 169, 255, 0.2), 0 12px 45px rgba(80, 125, 255, 0.25);
+
+  --ui-font-family: "Titillium Web", "Cairo", "Inter", "Segoe UI", Tahoma, Arial, sans-serif;
+  --ui-font-size-sm: 0.875rem;
+  --ui-font-size-md: 1rem;
+  --ui-font-size-lg: 1.125rem;
+  --ui-font-size-xl: 1.5rem;
+  --ui-line-height: 1.55;
+
+  --ui-glass-blur: blur(18px);
+}
+
+html[dir="rtl"],
+body[dir="rtl"] {
+  --ui-font-family: "Cairo", "Titillium Web", "Inter", "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    scroll-behavior: auto;
+  }
+}
