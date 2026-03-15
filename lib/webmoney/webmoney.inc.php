@@ -60,7 +60,7 @@ class WM_Request
     $frm = '<form method="post" action="' . htmlentities($this->action) . '">' . "\n";
 
     $tmp = $this->payee_purse;
-    if (!ereg('^[ZREUD][0-9]{12}$', $tmp))
+    if (!preg_match('/^[ZREUD][0-9]{12}$/', $tmp))
     {
       trigger_error(WM_RF_ERR1, E_USER_ERROR);
     }

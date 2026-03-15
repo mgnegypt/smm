@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../lib/php8_input.php';
+
 $method_name  = route(1);
 
 if( !countRow(["table"=>"payment_methods","where"=>["method_get"=>$method_name] ]) ):
@@ -428,11 +430,12 @@ elseif ($method_name == 'coinpayments'):
     $pass        = "AABBCCDDEEFF";    /* pass to compute HASH */
     $result        = "";                 /* string for compute HASH for received data */
     $return        = "";                 /* string to compute HASH for return result */
-    $signature    = $_POST["HASH"];    /* HASH received */
+    $postData    = input_safe_array($_POST);
+    $signature    = input_string($postData, "HASH");    /* HASH received */
     $body        = "";
     /* read info received */
     ob_start();
-    while(list($key, $val) = each($_POST)){
+    foreach($postData as $key => $val){
         $$key=$val;
         /* get values */
         if($key != "HASH"){
@@ -446,8 +449,13 @@ elseif ($method_name == 'coinpayments'):
     $body = ob_get_contents();
     ob_end_flush();
     $date_return = date("YmdHis");
-    $return = strlen($_POST["IPN_PID"][0]).$_POST["IPN_PID"][0].strlen($_POST["IPN_PNAME"][0]).$_POST["IPN_PNAME"][0];
-    $return .= strlen($_POST["IPN_DATE"]).$_POST["IPN_DATE"].strlen($date_return).$date_return;
+    $ipnPid = input_array($postData, 'IPN_PID');
+    $ipnPName = input_array($postData, 'IPN_PNAME');
+    $ipnDate = input_string($postData, 'IPN_DATE');
+    $firstPid = isset($ipnPid[0]) ? (string) $ipnPid[0] : '';
+    $firstPName = isset($ipnPName[0]) ? (string) $ipnPName[0] : '';
+    $return = strlen($firstPid).$firstPid.strlen($firstPName).$firstPName;
+    $return .= strlen($ipnDate).$ipnDate.strlen($date_return).$date_return;
     function ArrayExpand($array){
         $retval = "";
         for($i = 0; $i < sizeof($array); $i++){
