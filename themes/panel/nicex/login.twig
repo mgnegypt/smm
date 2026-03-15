@@ -1,0 +1,235 @@
+{% include 'header.twig' %}
+<div class="text-center text-white mt-3 px-3 px-lg-5">
+    <h2>{{lang["smmspot.login.title"]}}</h2>
+    <div class="text-muted h5 font-weight-normal mt-3">{{lang["smmspot.login.text"]}}</div>
+</div>
+<style>
+    img.hero-img {
+    max-height: 520px;
+    margin-bottom: -34px;
+    max-width: 100%;
+}
+body{
+    background-image: url(images/x8e2teldxfwxfuof_kzhick_gmmefm.png), linear-gradient(to right, #212529, #212529);background-size: cover;" !important
+}
+</style>
+<div class="row align-items-center">
+    <div class="col-md-6 mt-3 order-2 order-sm-1">
+        <img src="images/man.png" class="hero-img">
+    </div>
+    <div class="col-md-6 mt-3 order-1 order-sm-2">
+        <div class="g-card">
+            <div class="g-card-body text-white">
+                {% if errorText %}
+						<div class="alert alert-dismissible alert-danger">
+						  <button type="button" class="close" data-dismiss="alert">×</button>
+						  {{ errorText }}
+						</div>
+					  {% endif %}
+					  {% if successText %}
+						<div class="alert alert-dismissible alert-success">
+						  <button type="button" class="close" data-dismiss="alert">×</button>
+						  {{ successText }}
+						</div>
+					  {% endif %}
+                <form  method="post" action="" class="my-4">
+                        <h2 class="text-center">{{ site["site_name"] }}</h2>
+                        <div class="mt-4">
+                            <div class="input-group input-style">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="ri-user-line icon-24"></i></span>
+                                </div>
+                                <input type="text" class="form-control input-style" name="username" placeholder="{{lang['signup.username']}}" required>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="input-group input-style">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="ri-lock-line icon-24"></i></span>
+                                </div>
+                                <input type="password" class="form-control input-style" name="password" placeholder="{{lang['signup.password']}}" required>
+                            </div>
+                        </div>
+                        <div class="mt-4 row text-left">
+                            <div class="col">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="remember" name="remember">
+                                    <label class="custom-control-label" for="remember">{{ lang['signin.remember'] }}</label>
+                                </div>
+                            </div>
+							{% if resetPage %}
+                            <div class="col-auto">
+                                <a href="/resetpassword" class="text-light">{{ lang['signin.password.lost'] }}</a>
+                            </div>
+							{% endif %}
+                        </div>
+                        <div class="mt-4">
+						  {% if captcha %}
+							<div class="form-group">
+							  <div class="g-recaptcha" data-sitekey="{{ captchaKey }}"></div>
+							</div>
+						  {% endif %}
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-warning d-block w-100">{{ lang['signin.button'] }}</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="container py-5 my-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <div class="h2 mb-4" style="color:white">{{lang["smmspot.login.information.title1"]}}</div>
+            <div class="text-light">{{lang["smmspot.login.information.description1"]}}
+            </div>
+        </div>
+        <div class="col-lg-6 text-center text-lg-right mt-5 mt-lg-0 position-relative payment-safe">
+            <div class="secure-payment p-3 text-center">
+                <div class="icon"><i class="ri-shopping-cart-2-line"></i></div>
+                <div class="text-light mt-2 mb-3"></div>
+                <img src="images/cards.svg" class="w-100">
+            </div>
+            <img src="images/section-1.png" class="img-side">
+        </div>
+    </div>
+</div>
+
+
+<div class="py-5">
+    <div class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-center text-lg-left position-relative">
+                <div class="features d-none d-lg-block">
+                    <div class="feature">
+                        <div class="row align-items-center">
+                            <div class="col">{{lang["signin.title"]}}</div>
+                            <div class="col-auto d-flex"><i class="ri-user-follow-line icon-24"></i></div>
+                        </div>
+                    </div>
+                    <div class="feature mt-4">
+                        <div class="row align-items-center">
+                            <div class="col">{{lang["smmspot.orders.no.order.text3"]}}</div>
+                            <div class="col-auto d-flex"><i class="ri-wallet-line icon-24"></i></div>
+                        </div>
+                    </div>
+                    <div class="feature mt-4">
+                        <div class="row align-items-center">
+                            <div class="col">{{lang["neworder.title"]}}</div>
+                            <div class="col-auto d-flex"><i class="ri-heart-line icon-24"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <img src="images/section-2.png" class="img-side">
+            </div>
+            <div class="col-lg-6 mt-5 mt-lg-0">
+                <div class="h2 mb-4"  style="color:white">{{lang["smmspot.login.information.title2"]}}</div>
+                <div class="text-light">{{lang["smmspot.login.information.description2"]}}
+                    <div class="mt-4">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <a href="/signup" class="btn btn-dark d-flex align-items-center text-left">
+                                    <i class="ri-user-add-line icon-24 mr-4"></i>
+                                    <div>
+                                        <div class="font-weight-normal">{{lang["signup.title"]}}</div>
+                                        <div></div>
+                                    </div>
+                                </a>
+                            </div>
+                           <!--<div class="col-lg-6 mt-4 mt-lg-0">
+                                <a data-toggle="modal" data-target="#loginModal" class="btn btn-dark-outline d-flex align-items-center text-left">
+                                    <i class="ri-login-box-line icon-24 mr-4"></i>
+                                    <div>
+                                        <div class="font-weight-normal">Alışverişe Başla</div>
+                                        <div>Giriş Yap</div>
+                                    </div>
+                                </a>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="py-5 bg-pattern">
+    <div class="container text-white text-center">
+        <div class="h4 font-weight-light">{{lang["smmspot.footer.sub.title1"]}}</div>
+        <div class="h3 mb-4">{{lang["smmspot.footer.sub.title2"]}}</div>
+        <a href="/signup" class="btn btn-success font-weight-normal d-inline-flex align-items-center">
+           {{lang["signup.title"]}}<i class="ri-arrow-right-line ml-2"></i>
+        </a>
+    </div>
+</div>
+
+<div class="my-2 py-5 container">
+   <!-- <div class="row">
+        <div class="col-lg-4">
+            <div class="bg-pattern text-center h-100 px-3 py-5 d-flex align-items-center rounded text-center text-white">
+                <div>
+                    <i class="ri-chat-smile-2-line icon-48"></i>
+                    <div class="h3 my-4">Müşterilerimizden Gelen Yorumlar</div>
+                    <i class="ri-arrow-right-s-line bg-success shadow icon-36 circle-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="testimonials">
+                <div class="testimonial shadow p-3 d-flex align-items-center">
+                    <img src="images/testimonial-1.jpg" width="65" height="65" class="rounded-circle mr-3">
+                    <div>
+                        <b>Aykut Korkmaz</b>
+                        <div>Phasellus sed pretium nisi. Praesent consequat ex nec cursus lobortis. Aliquam mattis
+                            risus quis elit iaculis, eu ultricies mauris molestie.</div>
+                    </div>
+                </div>
+                <div class="testimonial shadow p-3 d-flex align-items-center">
+                    <img src="images/testimonial-2.jpg" width="65" height="65" class="rounded-circle mr-3">
+                    <div>
+                        <b>Recep Tekel</b>
+                        <div>Vivamus in congue risus. Duis luctus metus vel purus interdum, at auctor libero auctor.
+                            Vehicula pretium justo.</div>
+                    </div>
+                </div>
+                <div class="testimonial shadow p-3 d-flex align-items-center">
+                    <img src="images/testimonial-3.jpg" width="65" height="65" class="rounded-circle mr-3">
+                    <div>
+                        <b>Damla Kal</b>
+                        <div>In lectus arcu, tempus vitae augue vel, blandit luctus magna. Curabitur luctus rutrum
+                            tortor sed gravida.</div>
+                    </div>
+                </div>
+                <div class="testimonial shadow p-3 d-flex align-items-center">
+                    <img src="images/testimonial-4.jpg" width="65" height="65" class="rounded-circle mr-3">
+                    <div>
+                        <b>Sinem Tok</b>
+                        <div>Aenean congue ante eros, in sodales eros tincidunt sit amet. In dignissim dui neque, et
+                            blandit tortor varius a.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+</div>
+
+
+
+
+
+
+
+
+<?php include 'footer.php' ?>
+
+{% for lang in site['languages'] %}
+  {% if lang['active'] %}
+    <script src="https://www.google.com/recaptcha/api.js?hl={{ lang['code'] }}"></script>
+  {% endif %}
+{% endfor %}
+
+{% include 'footer.twig' %}

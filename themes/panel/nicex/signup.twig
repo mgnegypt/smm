@@ -1,0 +1,112 @@
+{% include 'header.twig' %}
+<style>
+body {background: var(--primary-color)}
+</style>
+<div class="text-center text-white">
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-6">
+            <img src="../../../images/register-circle.png" class="mw-100">
+        </div>
+        <div class="col-lg-6 mt-4 mt-lg-0">
+      {% if errorText %}
+        <div class="alert alert-dismissible alert-danger">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          {{ errorText }}
+        </div>
+      {% endif %}
+      {% if successText %}
+        <div class="alert alert-dismissible alert-success">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          {{ successText }}
+        </div>
+      {% endif %}
+            <div class="bg-pattern p-4 rounded">
+                <div class="h3 mb-3">{{lang["signup.title"]}}</div>
+                 <form method="post" action="">
+				   {% if settings['name_secret'] == 2 %}
+                    <div class="mt-4">
+                        <div class="input-group input-style">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ri-user-line icon-24"></i></span>
+                            </div>
+                            <input type="text" class="form-control input-style" name="first_name" value="{{ data['first_name'] }}" placeholder="{{lang["signup.first_name"]}}" required>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="input-group input-style">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ri-user-line icon-24"></i></span>
+                            </div>
+                            <input type="text" class="form-control input-style" name="last_name" value="{{ data['last_name'] }}" placeholder="{{lang["signup.last_name"]}}" required>
+                        </div>
+                    </div>
+					{% endif %}
+					<div class="mt-4">
+                        <div class="input-group input-style">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ri-edit-line icon-24"></i></span>
+                            </div>
+                            <input type="text" class="form-control input-style" name="username" value="{{ data['username'] }}" placeholder="{{lang["signup.username"]}}" required="">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="input-group input-style">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ri-mail-send-line icon-24"></i></span>
+                            </div>
+                            <input type="text" class="form-control input-style" name="email" value="{{ data['email'] }}" placeholder="{{lang["signup.email"]}}" required>
+                        </div>
+                    </div>
+					{% if settings['skype_area'] == 2 %}
+                    <div class="mt-4">
+                        <div class="input-group input-style">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ri-phone-line icon-24"></i></span>
+                            </div>
+                            <input type="text" class="form-control input-style" name="telephone" value="{{ data['telephone'] }}" placeholder="{{lang["signup.telephone"]}}" required>
+                        </div>
+                    </div>
+					{% endif %}
+                    <div class="mt-4">
+                        <div class="input-group input-style">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ri-lock-line icon-24"></i></span>
+                            </div>
+                            <input type="password" class="form-control input-style" name="password" placeholder="{{lang["signup.password"]}}" required>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="input-group input-style">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="ri-lock-line icon-24"></i></span>
+                            </div>
+                            <input type="password" class="form-control input-style" name="password_again" placeholder="{{lang["signup.confirm"]}}" required>
+                        </div>
+                    </div>
+					{% if settings['terms_checkbox'] == 2 %}
+                    <div class="mt-4 custom-control custom-checkbox text-left checkbox">
+                        <input type="checkbox" name="terms" value="1">{{ lang['signup.accept_terms_text'] }}
+                    </div>
+					{% endif %}
+                    <div class="mt-4">
+                        <div class="g-recaptcha" data-sitekey="{{ captchaKey }}"></div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success d-block w-100">{{lang["signup.button"]}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+{% for lang in site['languages'] %}
+  {% if lang['active'] %}
+    <script src="https://www.google.com/recaptcha/api.js?hl={{ lang['code'] }}"></script>
+  {% endif %}
+{% endfor %}
+
+{% include 'footer.twig' %}

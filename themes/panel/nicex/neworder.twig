@@ -1,0 +1,427 @@
+{% include 'header.twig' %}
+<style>
+  #dc-body .checkbox label {
+    color: white;
+}
+
+
+.bg-pattern{
+     background-image: url(images/x8e2teldxfwxfuof_kzhick_gmmefm.png), linear-gradient(to right, #212529, #212529);background-size: cover;" !important
+}
+
+</style>
+
+
+
+<div class="app-content">
+   <div class="container-fluid">
+      <div class="row mb-4">
+         <div class="col-lg-7 col-md-12 col-12 mb-lg-0 d-none d-md-block">
+            <div class="head-box p-3 rounded bg-pattern text-white h-100" style="background: #212529 url(https://res.cloudinary.com/smxboostpanel/image/upload/v1657586797/World_Map_8_ycewdv_dsfzov.svg); background-size: cover; background-position: center; background-repeat: no-repeat;">
+               <div class="h3 mb-3">{{lang['cerulean.welcome']}} <span>{{ user['username'] }}</span> <i class="fas fa-badge-check"></i>
+
+              
+
+               </div>
+               <div>{{lang['cerulean.new_order.desc']}}</div>
+            </div>
+         </div>
+         <div class="col-lg-5 col-md-12 col-12 mb-lg-0">
+            <div class="p-3 rounded bg-pattern text-white h-100" style="background-image: url(https://res.cloudinary.com/smxboostpanel/image/upload/v1657585674/nwo-1-Recovered_zxnvpp_rw3btc.png);
+    background-size: cover;">
+               <div class="d-flex justify-content-between align-items-center">
+                  <div class="ulevel-c bar-25">
+                     <div class="ulevel-text">
+                        <i class="ri-shield-user-line"></i>
+                     </div>
+                  </div>
+                  <div class="col ml-3">
+                     <div>
+                        <h5 class="ulevel-t-1">{{lang['smmspot.neworder.status.title']}}</h5>
+                        <h3 class="ulevel-t-2">
+                           <span id="accStats"></span>
+                           <p id="spentBalance" style="display:none">{{ currency["symbol"]  }} {{ (user["spent"]*currency["value"]) |round(2, 'floor') }}</p>
+                           <script>
+                              const cBalance = document.getElementById("spentBalance").innerText;
+                              var text;
+                              if (100 < cBalance && cBalance < 500) { text = "{{ lang['smmspot.neworder.status.3'] }}"; }    
+                              if (1000 < cBalance && cBalance < 4999) { text = "{{ lang['smmspot.neworder.status.2'] }}"; }    
+                              else if (1500 < cBalance && cBalance < 2000) { text = "{{ lang['smmspot.neworder.status.1'] }}"; }    
+                              else {
+                                text = "{{ lang['smmspot.neworder.status.4'] }}";
+                              }
+                              document.getElementById("accStats").innerText = text;
+                               
+                           </script> 
+                        </h3>
+                     </div>
+                  </div>
+                  <div class="col-auto d-none d-md-block">
+                     <div>
+                        <h3 class="ulevel-t-3">{{ currency["symbol"]  }} {{ (user["balance"]*currency["value"]) |round(2, 'floor') }}</h3>
+                     </div>
+                     <a href="/addfunds" class="btn btn-primary">{{lang["smmspot.orders.no.order.text3"]}}</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <section class="u-stats mt-1">
+         <div class="row">
+            <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 d-none d-md-block">
+               <div class="us-item bg-pattern us-item-a" style="background-image: url(https://res.cloudinary.com/smxboostpanel/image/upload/v1657585627/nwo-1-Recovered2_s0ry1x_h9btuw.png);background-size: cover;">
+                  <div class="row">
+                     <div class="col align-self-center">
+                        <div class="ui-title">
+                         {{lang["smmspot.neworder.total.order.title"]}}
+                        </div>
+                        <div class="ui-text">
+                           {{ totalorders }}
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
+               <div class="us-item bg-pattern us-item-b" style="background-image: url(https://res.cloudinary.com/smxboostpanel/image/upload/v1657585627/nwo-1-Recovered2_s0ry1x_h9btuw.png);background-size: cover;">
+                  <div class="row">
+                     <div class="col align-self-center">
+                        <div class="ui-title">
+                         {{lang["smmspot.neworder.total.balance.title"]}}
+                        </div>
+                        <div class="ui-text">
+                          {{ currency["symbol"]  }} {{ (user["balance"]*currency["value"]) |round(2, 'floor') }}
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 d-none d-md-block">
+               <div class="us-item bg-pattern us-item-c" style="background-image: url(https://res.cloudinary.com/smxboostpanel/image/upload/v1657585627/nwo-1-Recovered2_s0ry1x_h9btuw.png);background-size: cover;">
+                  <div class="row">
+                     <div class="col align-self-center">
+                        <div class="ui-title">
+                          {{lang["smmspot.neworder.balance.spent.title"]}}
+                        </div>
+                        <div class="ui-text">
+                         {{ currency["symbol"]  }} {{ (user["spent"]*currency["value"]) |round(2, 'floor') }}
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 d-none d-md-block">
+               <div class="us-item bg-pattern us-item-d" style="background-image: url(https://res.cloudinary.com/smxboostpanel/image/upload/v1657585627/nwo-1-Recovered2_s0ry1x_h9btuw.png);background-size: cover;">
+                  <div class="row">
+                     <div class="col align-self-center">
+                        <div class="ui-title">
+                          {{lang["smmspot.neworder.balance.status"]}}
+                        </div>
+                        <div class="ui-text">
+                           {% if user['balance'] > 10 %}
+                           {{lang["cerulean.normal"]}}
+                           {% else %}
+                           {{lang["cerulean.low"]}}
+                           {% endif %}
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+      <section>
+         <div class="row">
+            <div class="col-lg-7 col-12 mb-5 mb-lg-0">
+               <div class="g-card">
+                  <div class="g-card-body" id="dc-body">
+                     <div class="g-card-header">
+                       {{lang["smmspot.neworder.place.a.new.order.title"]}}
+                        <div class="g-divider"></div>
+                     </div>
+                     {% if error %}
+                     <div class="alert alert-dismissible alert-danger">
+                        {{ errorText }}
+                     </div>
+                     {% endif %}
+                     {% if data["order"]["success"] == 1 %}
+                     <div class="alert alert-dismissible alert-success">
+                        <strong> {{ lang["neworder.success.id"] }}: </strong> {{ data['order']['id'] }} <br>
+                        <strong> {{ lang["neworder.success.service"] }}: </strong> {{ data['order']['service'] }} <br>
+                        <strong> {{ lang["neworder.success.link"] }}: </strong> {{ data['order']['link'] }} <br>
+                        <strong> {{ lang["neworder.success.quantity"] }}: </strong> {{ data['order']['quantity'] }} <br>
+                        <strong> {{ lang["neworder.success.link"] }}: </strong> {{ data['order']['price'] }} <br>
+                        <strong> {{ lang["neworder.success.balance"] }}: </strong>{{ data['order']['balance'] }} <br>
+                     </div>
+                     {% endif %}
+                     {% if data["order"]["success"] == 2 %}
+                     <div class="alert alert-dismissible alert-success">
+                        <strong> {{ lang["neworder.success.id"] }}: </strong> {{ data['order']['id'] }} <br>
+                        <strong> {{ lang["neworder.success.service"] }}: </strong> {{ data['order']['service'] }} <br>
+                        <strong> {{ lang["neworder.success.username"] }}: </strong> {{ data['order']['link'] }} <br>
+                        <strong> {{ lang["neworder.success.quantity"] }}: </strong> {{ data['order']['min'] }} - {{ data['order']['max'] }} <br>
+                        <strong> {{ lang["neworder.success.posts"] }}: </strong> {{ data['order']['posts'] }} <br>
+                        <strong> {{ lang["neworder.success.delay"] }}: </strong>{{ data['order']['delay'] }} <br>
+                     </div>
+                     {% endif %}
+                     <form method="post" action="/">
+                        {% if categories %}
+                        <div class="form-group">
+                           <label for="orderform-category" class="control-label">{{ lang["neworder.category"] }}</label>
+                           <select class="form-control" id="neworder_category" name="categories" style="display: none">
+                           {% for category in categories %}
+                           <option {% if 1 == loop.index %} selected {% endif %} value="{{ category['category_id'] }}" >{{ category["category_name"] }}</option>
+                           {% endfor %}
+                           </select>
+                           <div class="dropdown">
+                              <button class="form-control text-left" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                              <span id="categoryTitle"></span>
+                              <i class="fas fa-chevron-down float-right" aria-hidden="true"></i>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenu2" id="category-drop">
+                              </div>
+                           </div>
+                        </div>
+                        {% endif %}
+                        <div class="form-group mb-4">
+                           <label id="orderform-service" for="orderform-service" class="control-label" data-label="{{ lang["neworder.service"] }}">{{ lang["neworder.service"] }}</label>
+                           <select class="form-control" id="neworder_services" name="services" style="display: none;"> </select>
+                           <div class="dropdown">
+                              <button class="form-control text-left" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                              <span id="serviceTitle"></span>
+                              <i class="fa fa-caret-down float-right" aria-hidden="true"></i>
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenu2" id="orders-drop">
+                              </div>
+                           </div>
+                        </div>
+                        <div id="neworder_fields"></div>
+                        <div class="form-group mb-4">
+                           <label>
+                           {{ lang["neworder.charge"] }}
+                           </label>
+                           <div class="form-group">
+                              <input type="text" class="form-control" id="charge" value="" placeholder="0.00" readonly="" />
+                           </div>
+                        </div>
+                        {% if neworderTerms %}
+                        <div class="checkbox">
+                           <label>
+                           <input type="checkbox" name="neworder_check">{{ lang['neworder.recheck'] }}
+                           </label>
+                        </div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary btn-lg btn-block mb-4">{{lang["neworder.button"]}}</button>
+                     </form>
+                  </div>
+               </div>
+            </div>
+            <div class="col-lg-5 col-12 mb-5 mb-lg-0">
+               <div class="g-card h-100">
+                  <div class="g-card-body" id="dc2-body"  style="max-height: 750px; overflow-y: auto;">
+                     <div>
+                        <ul class="nav nav-tabs cstm-nav" role="tablist">
+                           <li class="nav-item">
+                              <button class="nav-link active" data-toggle="pill" href="#timeline" role="tab" aria-controls="pills-timeline" aria-selected="true">
+                              <i class="icon ri-chat-new-line mr-3"></i>
+                              <span class="">{{lang["ads"]}}</span>
+                              </button>
+                           </li>
+                           <li class="nav-item">
+                              <button class="nav-link" data-toggle="pill" href="#updates" role="tab" aria-controls="pills-updates" aria-selected="false">
+                              <i class="icon ri-flag-line mr-3"></i>
+                              <span class="">{{lang["win_balance"]}}</span>
+                              </button>
+                           </li>
+                        </ul>
+                     </div>
+                     <div 
+                     <div class="tab-content mt-4" id="nav-pageTab">
+                        <div class="tab-pane fade active show" id="timeline" role="tabpanel" aria-labelledby="timeline">
+                           {% for new in newsList %}
+                           <div class="card card-2">
+                              <div class="card-header">
+                                 <div class="row align-items-center">
+                                    <div class="col-auto">
+                                       <div class="c2-icon">
+                                          <img width="25" class="mr-1" src="/img/icons/{{ new['news_icon'] }}.png">
+                                       </div>
+                                    </div>
+                                    <div class="col">
+                                       <h4 class="c2-title mb-2">{{ new['news_title'] }}</h4>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="card-body">
+                                 <div class="c2-text">{{ new['news_content'] }}</div>
+                                 <small>{{ new['news_date'] }}</small>
+                              </div>
+                           </div>
+                           {% endfor %}
+                        </div>
+                        <div class="tab-pane fade show" id="updates" role="tabpanel" aria-labelledby="updates">
+                           <span style="color: #fff">{{lang["win_balance_desc"]}}.</span>								
+                           <div class="tablepen mt-2">
+                              <div class="sira headers bx-none">
+                                 <div class="hucre">
+                                    {{lang["platform"]}}
+                                 </div>
+                                 <div class="hucre">
+                                    {{lang["method"]}}
+                                 </div>
+                                 <div class="hucre">
+                                       {{lang["price"]}}
+                                 </div>
+                                 <div class="hucre">
+                                       {{lang["duration"]}}
+                                 </div>
+                              </div>
+                              <div class="sira">
+                                 <div class="hucre" data-title="Platform">
+                                    Forums
+                                 </div>
+                                 <div class="hucre" data-title="İşlem">
+                                   {{lang["pos_comment"]}}
+                                 </div>
+                                 <div class="hucre" data-title="Ücret">
+                                    1$
+                                 </div>
+                                 <div class="hucre" data-title="Süre">
+                                    1 {{lang["day"]}}
+                                 </div>
+                              </div>
+                              <div class="sira">
+                                 <div class="hucre" data-title="Platform">
+                                    Forums
+                                 </div>
+                                 <div class="hucre" data-title="İşlem">
+                                   Trade Points
+                                 </div>
+                                 <div class="hucre" data-title="Ücret">
+                                    1$
+                                 </div>
+                                 <div class="hucre" data-title="Süre">
+                                    1 {{lang["day"]}}
+                                 </div>
+                              </div>
+                              <div class="sira">
+                                 <div class="hucre" data-title="Platform">
+                                    Youtube
+                                 </div>
+                                 <div class="hucre" data-title="İşlem">
+                                    Video
+                                 </div>
+                                 <div class="hucre" data-title="Ücret">
+                                    25$ (.dk)
+                                 </div>
+                                 <div class="hucre" data-title="Süre">
+                                    15 {{lang["day"]}}
+                                 </div>
+                              </div>
+                              <div class="sira">
+                                 <div class="hucre" data-title="Platform">
+                                    Blog website
+                                 </div>
+                                 <div class="hucre" data-title="İşlem">
+                                    Post
+                                 </div>
+                                 <div class="hucre" data-title="Ücret">
+                                    5$
+                                 </div>
+                                 <div class="hucre" data-title="Süre">
+                                    15 {{lang["day"]}}
+                                 </div>
+                              </div>
+                              <div class="sira">
+                                 <div class="hucre" data-title="Platform">
+                                News website
+                                 </div>
+                                 <div class="hucre" data-title="İşlem">
+                                    Post
+                                 </div>
+                                 <div class="hucre" data-title="Ücret">
+                                    7.5$
+                                 </div>
+                                 <div class="hucre" data-title="Süre">
+                                    15 {{lang["day"]}}
+                                 </div>
+                              </div>
+                           </div>
+                           <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#exon"><i class="ri-file-text-line"></i>{{lang["terms_conditions"]}}</button>
+
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+   </div>
+</div>
+<nav class="app-navbar">
+   <ul class="app-navbar-link">
+      <li>
+         <a href="/addfunds"> 
+         <span class="balance">{{ user['balance'] }}</span> 
+         <span>{{lang["smmspot.orders.no.order.text3"]}}</span> 
+         </a>
+      </li>
+      <li>
+         <a href="/">
+         <i class="ri-add-box-line"></i> 
+         <span>{{lang["smmspot.header.menu.home.button.text"]}}</span> 
+         </a>
+      </li>
+      <li>
+         <a href="/account"> 
+         <i class="ri-shopping-bag-3-line"></i>
+         <span>{{lang["account.title"]}}</span> 
+         </a>
+      </li>
+      <li>
+         <a href="/logout"> 
+         <i class="ri-user-settings-line"></i>
+         <span>{{lang["logout.title"]}}</span> 
+         </a>
+      </li>
+   </ul>
+</nav>
+
+                           <div class="modal fade" id="exon" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" style="display: none;" aria-hidden="true">
+                              <div class="modal-dialog modal-xl" role="document">
+                                 <div class="modal-content">
+                                    <div class="modal-header">
+                                       <h5 class="modal-title" id="exampleModalLongTitle">{{lang["terms_conditions"]}}</h5>
+                                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                       <span aria-hidden="true">×</span>
+                                       </button>
+                                    </div>
+                                    <div class="modal-body">
+                                       <b>{{lang["rule"]}} 1</b>
+                                       <p>{{lang["rule_1"]}}</p>
+                                       <b>{{lang["rule"]}} 2</b>
+                                       <p>{{lang["rule_2"]}}</p>
+                                       <b>{{lang["rule"]}} 3</b>
+                                       <p>{{lang["rule_3"]}}</p>
+                                       <b>{{lang["rule"]}} 4</b>
+                                       <p>{{lang["rule_4"]}}</p>
+                                       <b>{{lang["rule"]}} 5</b>
+                                       <p>{{lang["rule_5"]}}</p>
+                                       <b>{{lang["rule"]}} 6</b>
+                                       <p>{{lang["rule_6"]}}</p>
+                                       <b>{{lang["rule_desc"]}}</b>
+                                    </div>
+                                    <div class="modal-footer">
+                                       <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">{{lang['close']}}</button>
+                                       <a href="/tickets" class="btn btn-sm btn-primary">{{lang['tickets.button']}}</a>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+						   
+{% include 'footer.twig' %}
+
+
+
+
+

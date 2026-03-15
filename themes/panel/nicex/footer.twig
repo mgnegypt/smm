@@ -1,0 +1,58 @@
+{{ footerCode }}
+
+{% if user['auth'] %}
+{% else %}
+<div class="flex-grow-1"></div>
+<div class="footer">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-5">
+			  <a href="/">
+				{% if site["logo"] %}
+				  <img src="{{ site['logo'] }}" height="40" alt="{{ site["site_name"] }}" title="{{ site["site_name"] }}">
+				{% else %}
+				  {{ site["site_name"] }}
+				{% endif %}
+			  </a>
+				
+                <div class="text-white-50 mt-3">{{settings["site_description"]}}</div>
+            </div>
+            <div class="col-lg mt-4 mt-lg-0">
+                <div class="h4 text-white d-flex mb-3">{{lang["links"]}}</div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link px-0 pt-0 text-white-50" href="/signup">{{lang["signup.title"]}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-0 text-white-50" href="/services">{{lang["smmspot.footer.sub.menu.2"]}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-0 text-white-50" href="/api">API</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-auto mt-4 mt-lg-0">
+                <div class="h4 text-white d-flex mb-3">{{lang["smmspot.login.box.text4"]}}</div>
+                <img src="../../../images/payment-methods.png" class="mw-100" height="146">
+            </div>
+        </div>
+    </div>
+    <div class="copyright">
+        <div class="container text-center text-white-50 py-3">
+            © Copyright 2022
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% for script in scriptList %}
+    <script type="text/javascript" src="{{ script }}"></script>
+{% endfor %}
+<!--<script type="text/javascript" src="js/main.js?v={{ random(50, 100) }}"></script>-->
+<style>
+    body{
+        font-family: 'Titillium Web', sans-serif;
+    }
+</style>
+</body>
+</html>

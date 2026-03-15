@@ -1,0 +1,158 @@
+{% include 'header.twig' %}
+{% if contentText %}
+<div class="app-content container">
+  <div class="row">
+    <div class="col-md-8 offset-2">
+      <div class="well ">
+        {{ contentText }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="app-content mt-5">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-8">
+
+      {% if error %}
+        <div class="alert alert-dismissible alert-danger {% if site['rtl'] %} rtl-alert {% endif %}">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          {{ errorText }}
+        </div>
+      {% elseif success %}
+        <div class="alert alert-dismissible alert-success {% if site['rtl'] %} rtl-alert {% endif %}">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          {{ successText }}
+        </div>
+      {% endif %}
+
+        <div class="g-card">
+            <div class="g-card-body text-white">
+              <form method="post" action="tickets">
+                <div class="form-group">
+                  <label for="subject" class="control-label">{{ lang['tickets.subject'] }}</label>
+                    <select class="form-control" id="subject" name="subject">
+                      {% for subjects in orders %}
+                       <option value"{{ subjects['subject'] }}">{{ subjects['subject'] }}</option>
+                      {% endfor %}
+                    </select>  
+                </div>
+                <div class="form-group">
+                  <label for="message" class="control-label">{{ lang['tickets.message'] }}</label>
+                  <textarea class="form-control" rows="7" id="message" name="message">{{ data['message'] }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">{{ lang['tickets.button'] }}</button>
+              </form>
+          </div>
+        </div>
+    {% if ticketList %}
+      <div class="g-card mt-3">
+            <div class="g-card-body text-white">
+          <table class="table">
+            <thead>
+            <tr class=" text-white">
+              <th>{{ lang['tickets.id'] }}</th>
+              <th>{{ lang['tickets.subject'] }}</th>
+              <th>{{ lang['tickets.status'] }}</th>
+              <th class="nowrap">{{ lang['tickets.updated'] }}</th>
+            </tr>
+            </thead>
+            <tbody>
+              {% for ticket in ticketList %}
+                <tr class=" text-white">
+                  <td>{{ ticket['ticket_id'] }}</td>
+                  {% if ticket["support_new"] == 2 %}
+                    <td><a href="tickets/{{ ticket['ticket_id'] }}"><strong>{{ ticket['subject'] }}</strong></a></td>
+                  {% else %}
+                    <td><a href="tickets/{{ ticket['ticket_id'] }}">{{ ticket['subject'] }}</a></td>
+                  {% endif %}
+                  <td>{{ ticket['status'] }}</td>
+                  <td><span class="nowrap">{{ ticket['lastupdate_time'] }}</span></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        </div>
+    {% endif %}
+      </div>
+    <div class="col-md-4">
+        <div class="accordion text-white" id="accordionExample">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h2 class="mb-0">
+        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Nasıl Sipariş Verilir?
+        </button>
+      </h2>
+    </div>
+
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div class="card-body">
+        Sipariş verebilmek için öncesinde bakiye eklemeniz gerekir. Bir sonra ki sık sorulan soru ise bakiyenin nasıl yüklendiği ile ilgili. Eğer hesabınızda bakiye var ise <strong>Yeni Sipariş</strong> sayfasından kategori ve servisinizi seçtikten sonra sipariş verebilirsiniz.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingTwo">
+      <h2 class="mb-0">
+        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          Nasıl Bakiye Yüklenir?
+        </button>
+      </h2>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+      <div class="card-body">
+          Panelimize dilediğiniz zaman tam otomatik bir şekilde bakiye yükleyebilirsiniz. Bunun için <strong>Bakiye Ekle</strong> sayfasına tıkladıktan sonra açılan sayfada ödeme yöntemini ve yüklemek istediğiniz bakiye miktarını belirleyin ve butona tıklayın. Ardından online ödeme yapabilirsiniz.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingThree">
+      <h2 class="mb-0">
+        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          Takipçilerim Neden Düşüyor?
+        </button>
+      </h2>
+    </div>
+    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+      <div class="card-body">
+          Satın almış olduğunuz takipçiler veya ürünler bazen Instagram veya ilgili sosyal medya tarafından otomatik olarak düşürülebilmektedir. Bu durumda panelimizin veya sizin yapabileceği bir işlem bulunmamaktadır. Eğer telafi garantili servislerden sipariş verdiyseniz telafi et butonuna tıklayabilirsiniz.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingFour">
+      <h2 class="mb-0">
+        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+          Bayilik Nasıl Alırım?
+        </button>
+      </h2>
+    </div>
+    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+      <div class="card-body">
+          Panelimiz sizler için bayilik hizmeti de sunmaktadır. Kullandığınız SMM Panel veya Paket Satış yazılımına api bilgilerimizi bağlayarak servislerimizi kendi sitenizde sergileyebilir ve kâr elde edebilirsiniz. Detaylı bilgi için bize teknik destek üzerinden ulaşabilirsiniz.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingFive">
+      <h2 class="mb-0">
+        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+          Siparişim Hızlandırılabilir mi?
+        </button>
+      </h2>
+    </div>
+    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+      <div class="card-body">
+          Siparişleriniz otomatik olarak işlenmekte olup el ile müdahale şansı bulunmamaktadır. Dolayısıyla servisler yoğun olduğu zamanlarda gönderim hızlarında yavaşlık olabiliyor. Mümkün olan en kısa sürede siparişlerinizi teslim etmek için çalıştığımızdan emin olabilirsiniz.
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+</div>
+{% include 'footer.twig' %}
