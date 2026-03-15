@@ -7501,3 +7501,35 @@ blockquote{
     font-size: 19px;
     margin-top: -65px;
 }
+/* Unified UI System Bridge (Glass/Galaxy/Dark) */
+:root {
+  color-scheme: dark;
+}
+
+body.admin-galaxy {
+  font-family: var(--ui-font-family);
+  color: var(--ui-color-text);
+}
+
+.admin-glass-nav.navbar {
+  border-color: rgba(140, 169, 255, 0.25);
+}
+
+.navbar-default .navbar-nav > li > a,
+.panel,
+.well,
+.card,
+.table,
+.form-control {
+  color: var(--ui-color-text);
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > li > a:hover {
+  background: rgba(115, 167, 255, 0.15);
+  border-radius: var(--ui-radius-sm);
+}
+
+.table > thead > tr > th {
+  border-bottom: 1px solid rgba(140, 169, 255, 0.3);
+}

@@ -2311,3 +2311,33 @@ small.help-block.min-max {
     text-decoration: none;
     display: block;
 }
+/* Unified UI System Bridge (Glass/Galaxy/Dark) */
+:root {
+  color-scheme: dark;
+}
+
+.app-container,
+.app-content,
+.app-header,
+.app-sidebar,
+.app-content .card,
+.app-content .well,
+.app-content .panel {
+  color: var(--ui-color-text);
+}
+
+.sidebar-menu .menu-link,
+.top-nav .nav-link {
+  border-radius: var(--ui-radius-sm);
+}
+
+.sidebar-menu .active .menu-link,
+.sidebar-menu .menu-link:hover {
+  background: rgba(115, 167, 255, 0.14);
+  border: 1px solid rgba(115, 167, 255, 0.35);
+}
+
+.panel-heading,
+.card-header {
+  border-bottom: 1px solid rgba(140, 169, 255, 0.2);
+}

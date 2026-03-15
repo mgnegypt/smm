@@ -27,6 +27,8 @@ echo title2('tr',route(1));
 <script src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js'></script>
 <![endif]-->  
 <link href='/css/admin/custom.css' rel='stylesheet'>
+<link rel='stylesheet' href='/assets/styles/tokens.css'>
+<link rel='stylesheet' href='/assets/styles/components.css'>
 <link rel='stylesheet' href='/css/admin/bootstrap.css'>
 <link rel='stylesheet' href='/css/admin/style.css'>
 <link rel='stylesheet' href='/css/admin/toastDemo.css'>
