@@ -7316,3 +7316,117 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+
+/* === Admin Glass Galaxy Dark Theme === */
+body.admin-galaxy,
+body.admin-login-galaxy{
+  min-height:100vh;
+  background:radial-gradient(circle at 20% 20%,#3b1f76 0%,#110f2a 35%,#090b16 70%,#05070f 100%);
+  color:#e9ecff;
+}
+
+.admin-galaxy-bg,
+.login-galaxy-bg{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:0;
+}
+
+.galaxy-orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(10px);
+  opacity:.45;
+  animation:floatOrb 14s ease-in-out infinite;
+}
+
+.orb-a,.orb-1{width:360px;height:360px;left:-100px;top:10%;background:rgba(91,141,255,.45)}
+.orb-b,.orb-2{width:420px;height:420px;right:-120px;top:35%;background:rgba(143,92,255,.4);animation-delay:2s}
+.orb-c,.orb-3{width:300px;height:300px;left:30%;bottom:-120px;background:rgba(0,214,255,.25);animation-delay:4s}
+
+.galaxy-grid{
+  position:absolute;
+  inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:45px 45px;
+  mask-image:radial-gradient(circle at center,rgba(0,0,0,.8),transparent 80%);
+}
+
+.admin-galaxy .navbar.admin-glass-nav{
+  background:rgba(13,19,41,.62)!important;
+  border:1px solid rgba(161,190,255,.22)!important;
+  box-shadow:0 8px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+}
+
+.admin-galaxy .navbar-default .navbar-nav>li>a,
+.admin-galaxy .navbar-default .navbar-brand,
+.admin-galaxy .dropdown-menu>li>a{color:#e7edff!important}
+
+.admin-galaxy .navbar-default .navbar-nav>.active>a,
+.admin-galaxy .navbar-default .navbar-nav>.active>a:focus,
+.admin-galaxy .navbar-default .navbar-nav>.active>a:hover,
+.admin-galaxy .navbar-default .navbar-nav>li>a:hover{
+  background:rgba(124,164,255,.2)!important;
+  color:#fff!important;
+}
+
+.admin-galaxy .container-fluid,
+.admin-galaxy .container,
+.admin-galaxy .well,
+.admin-galaxy .panel,
+.admin-galaxy .modal-content{
+  position:relative;
+  z-index:1;
+}
+
+.admin-galaxy .well,
+.admin-galaxy .panel,
+.admin-galaxy .table,
+.admin-galaxy .modal-content,
+.admin-galaxy .dropdown-menu{
+  background:rgba(10,16,34,.72)!important;
+  border:1px solid rgba(159,183,255,.25)!important;
+  box-shadow:0 10px 35px rgba(6,11,24,.45)!important;
+  color:#ecf1ff;
+}
+
+.admin-galaxy .form-control,
+.admin-login-galaxy .form-control{
+  background:rgba(18,26,50,.72);
+  border:1px solid rgba(138,168,245,.45);
+  color:#eff4ff;
+}
+
+.admin-galaxy .form-control:focus,
+.admin-login-galaxy .form-control:focus{
+  border-color:#79a4ff;
+  box-shadow:0 0 0 3px rgba(103,150,255,.2);
+}
+
+.admin-login-shell{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:30px 15px}
+.admin-login-card{
+  width:100%;
+  max-width:470px;
+  background:linear-gradient(155deg,rgba(21,31,60,.86),rgba(9,14,31,.86));
+  border:1px solid rgba(169,195,255,.28);
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 20px 45px rgba(4,8,20,.58), inset 0 1px 0 rgba(255,255,255,.12);
+  backdrop-filter:blur(14px);
+  animation:cardRise .8s ease;
+}
+
+.admin-login-brand{display:flex;gap:14px;align-items:center;margin-bottom:20px}
+.brand-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6e8cff,#9a6bff);font-size:22px;color:#fff;box-shadow:0 10px 20px rgba(110,140,255,.35)}
+.admin-login-brand h1{margin:0;font-size:24px;color:#fff}
+.admin-login-brand p{margin:3px 0 0;color:#b9c8ff;font-size:13px}
+.admin-login-form label{color:#d8e2ff;font-weight:600;display:flex;gap:8px;align-items:center}
+.btn-galaxy-login{width:100%;border:none;border-radius:12px;padding:12px 16px;font-weight:700;color:#fff;background:linear-gradient(135deg,#5f8dff,#8f5bff);box-shadow:0 12px 24px rgba(90,133,255,.35);transition:all .3s ease;display:flex;justify-content:center;align-items:center;gap:8px}
+.btn-galaxy-login:hover{transform:translateY(-2px);box-shadow:0 16px 28px rgba(90,133,255,.5);color:#fff}
+.recaptcha-wrap{overflow:auto}
+
+@keyframes floatOrb{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(-20px) translateX(16px)}}
+@keyframes cardRise{from{transform:translateY(25px);opacity:0}to{transform:translateY(0);opacity:1}}
