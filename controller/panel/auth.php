@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../lib/php8_input.php';
+
 $title = $settings["site_title"];
 
 if( !route(1) ){
@@ -26,10 +28,11 @@ if(route(1) !== 'login') {
 
 if( $route[1] == "login" && $_POST ){
     
-    $username       = htmlentities($_POST["username"]);
-    $pass           = htmlentities($_POST["password"]);
-    $captcha        = $_POST['g-recaptcha-response'];
-    $remember       = htmlentities($_POST["remember"]);
+    $postData       = input_safe_array($_POST);
+    $username       = htmlentities(input_string($postData, "username"));
+    $pass           = htmlentities(input_string($postData, "password"));
+    $captcha        = input_string($postData, 'g-recaptcha-response');
+    $remember       = htmlentities(input_string($postData, "remember"));
     $googlesecret   = $settings["recaptcha_secret"];
     $captcha_control= robot("https://www.google.com/recaptcha/api/siteverify?secret=$googlesecret&response=" . $captcha . "&remoteip=" . $_SERVER['REMOTE_ADDR']);
     $captcha_control= json_decode($captcha_control);
