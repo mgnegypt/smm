@@ -124,15 +124,18 @@ CREATE TABLE `clients` (
   `total_click` varchar(225) NOT NULL DEFAULT '0',
   `sms_verify` int(11) NOT NULL DEFAULT 1,
   `mail_verify` int(11) NOT NULL DEFAULT 1,
-  `currency` int(11) DEFAULT NULL
+  `currency` int(11) DEFAULT NULL,
+  `display_name` varchar(225) DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `bio` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `clients`
 --
 
-INSERT INTO `clients` (`client_id`, `first_name`, `last_name`, `email`, `username`, `password`, `telephone`, `balance`, `balance_type`, `debit_limit`, `spent`, `register_date`, `login_date`, `login_ip`, `register_ip`, `apikey`, `client_type`, `access`, `lang`, `timezone`, `admin_theme`, `referral`, `referral_code`, `refchar`, `reforder`, `total_click`, `sms_verify`, `mail_verify`, `currency`) VALUES
-(20, 'admin', 'account', 'admin@admin.com', 'admin', 'bb530de17aa1d30bc3bdb5a9e8012154', '', 0, '2', 0, 0, '2022-10-11 11:16:08', '2022-11-30 15:31:13', '103.82.79.111', '', '2bf9f076b7fd3b45a24f07d19158dba2', '2', '{\"admin_access\":\"1\",\"users\":\"1\",\"orders\":\"1\",\"subscriptions\":\"1\",\"dripfeed\":\"1\",\"tasks\":\"1\",\"services\":\"1\",\"payments\":\"1\",\"tickets\":\"1\",\"reports\":\"1\",\"general_settings\":\"1\",\"pages\":\"1\",\"blog\":\"1\",\"seo\":\"1\",\"menu\":\"1\",\"subject\":\"1\",\"child_panels\":\"1\",\"payments_settings\":\"1\",\"bank_accounts\":\"1\",\"payments_bonus\":\"1\",\"alert_settings\":\"1\",\"providers\":\"1\",\"modules\":\"1\",\"themes\":\"1\",\"language\":\"1\",\"logs\":\"1\",\"update-prices\":\"1\",\"crons\":\"1\",\"provider_logs\":\"1\",\"guard_logs\":\"1\",\"admins\":\"1\",\"kuponlar\":\"1\",\"currency_settings\":\"1\"}', 'en', 9000, '1', NULL, 'd22b8', '0', '0', '0', 1, 1, 12);
+INSERT INTO `clients` (`client_id`, `first_name`, `last_name`, `email`, `username`, `password`, `telephone`, `balance`, `balance_type`, `debit_limit`, `spent`, `register_date`, `login_date`, `login_ip`, `register_ip`, `apikey`, `client_type`, `access`, `lang`, `timezone`, `admin_theme`, `referral`, `referral_code`, `refchar`, `reforder`, `total_click`, `sms_verify`, `mail_verify`, `currency`, `display_name`, `avatar`, `bio`) VALUES
+(20, 'admin', 'account', 'admin@admin.com', 'admin', 'bb530de17aa1d30bc3bdb5a9e8012154', '', 0, '2', 0, 0, '2022-10-11 11:16:08', '2022-11-30 15:31:13', '103.82.79.111', '', '2bf9f076b7fd3b45a24f07d19158dba2', '2', '{\"admin_access\":\"1\",\"users\":\"1\",\"orders\":\"1\",\"subscriptions\":\"1\",\"dripfeed\":\"1\",\"tasks\":\"1\",\"services\":\"1\",\"payments\":\"1\",\"tickets\":\"1\",\"reports\":\"1\",\"general_settings\":\"1\",\"pages\":\"1\",\"blog\":\"1\",\"seo\":\"1\",\"menu\":\"1\",\"subject\":\"1\",\"child_panels\":\"1\",\"payments_settings\":\"1\",\"bank_accounts\":\"1\",\"payments_bonus\":\"1\",\"alert_settings\":\"1\",\"providers\":\"1\",\"modules\":\"1\",\"themes\":\"1\",\"language\":\"1\",\"logs\":\"1\",\"update-prices\":\"1\",\"crons\":\"1\",\"provider_logs\":\"1\",\"guard_logs\":\"1\",\"admins\":\"1\",\"kuponlar\":\"1\",\"currency_settings\":\"1\"}', 'en', 9000, '1', NULL, 'd22b8', '0', '0', '0', 1, 1, 12, 'Admin', NULL, NULL);
 
 -- --------------------------------------------------------
 
