@@ -515,8 +515,20 @@ function themeExtras($which){
   $theme =  $conn->prepare("SELECT * FROM themes WHERE theme_dirname=:dir ");
   $theme-> execute(array('dir'=>THEME));
   $theme =  $theme->fetch(PDO::FETCH_ASSOC);
+  if(!$theme){
+    return ["stylesheets"=>[],"scripts"=>[]];
+  }
 
-  return json_decode($theme["theme_extras"],true);
+  $extras = json_decode($theme["theme_extras"],true);
+  if(!is_array($extras)){
+    $extras = ["stylesheets"=>[],"scripts"=>[]];
+  }
+  if(!isset($extras['stylesheets']) || !is_array($extras['stylesheets'])) $extras['stylesheets'] = [];
+  if(!isset($extras['scripts']) || !is_array($extras['scripts'])) $extras['scripts'] = [];
+  if(!in_array('/assets/styles/tokens.css',$extras['stylesheets'])) $extras['stylesheets'][] = '/assets/styles/tokens.css';
+  if(!in_array('/assets/styles/components.css',$extras['stylesheets'])) $extras['stylesheets'][] = '/assets/styles/components.css';
+
+  return $extras;
 
 }
 

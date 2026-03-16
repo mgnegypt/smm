@@ -58,11 +58,55 @@ $settings = $conn->prepare('SELECT * FROM settings WHERE id=:id');
 $settings->execute(array('id'=>1));
 $settings = $settings->fetch(PDO::FETCH_ASSOC);
 
+if(isset($_SESSION['theme_preview']) && isset($_SESSION['theme_preview']['expires_at']) && $_SESSION['theme_preview']['expires_at'] < time()):
+  unset($_SESSION['theme_preview']);
+  unset($_SESSION['theme']);
+endif;
+
 if(isset($_SESSION['theme'])):
    $settings['site_theme'] = $_SESSION['theme'];
 endif;
 
-define('THEME', $settings['site_theme']);
+$activeTheme = $settings['site_theme'];
+if( !countRow(["table"=>"themes","where"=>["theme_dirname"=>$activeTheme]]) || !is_dir('themes/panel/'.$activeTheme) ):
+  $defaultTheme = $conn->prepare("SELECT theme_dirname FROM themes ORDER BY id ASC LIMIT 1");
+  $defaultTheme->execute();
+  $defaultTheme = $defaultTheme->fetch(PDO::FETCH_ASSOC);
+  $activeTheme = $defaultTheme['theme_dirname'] ?? 'nicex';
+  $settings['site_theme'] = $activeTheme;
+  $saveFallbackTheme = $conn->prepare("UPDATE settings SET site_theme=:theme WHERE id=:id");
+  $saveFallbackTheme->execute(["theme"=>$activeTheme,"id"=>1]);
+endif;
+
+define('THEME', $activeTheme);
+
+$themeTokens = [
+  'token_primary' => '#73a7ff',
+  'card_style' => 'glass',
+  'ui_density' => 'comfortable'
+];
+try {
+  $conn->exec("CREATE TABLE IF NOT EXISTS theme_settings (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    theme_dirname VARCHAR(120) NOT NULL,
+    token_primary VARCHAR(20) NOT NULL DEFAULT '#73a7ff',
+    card_style ENUM('soft','sharp','glass') NOT NULL DEFAULT 'glass',
+    ui_density ENUM('compact','comfortable','spacious') NOT NULL DEFAULT 'comfortable',
+    token_payload TEXT NULL,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uniq_theme_dirname (theme_dirname)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+  $themeSetting = $conn->prepare("SELECT * FROM theme_settings WHERE theme_dirname=:theme LIMIT 1");
+  $themeSetting->execute(["theme"=>THEME]);
+  $themeSetting = $themeSetting->fetch(PDO::FETCH_ASSOC);
+  if($themeSetting){
+    $themeTokens['token_primary'] = $themeSetting['token_primary'] ?: '#73a7ff';
+    $themeTokens['card_style'] = $themeSetting['card_style'] ?: 'glass';
+    $themeTokens['ui_density'] = $themeSetting['ui_density'] ?: 'comfortable';
+  }
+} catch(Exception $e) {}
+$settings['theme_tokens'] = $themeTokens;
 
 $loader   = new Twig_Loader_Filesystem('themes/panel/'.THEME);
 $twig     = new Twig_Environment($loader, ['autoescape' => false]);

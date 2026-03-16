@@ -19,57 +19,57 @@
                    <div class="settings-themes">
 
          <?php foreach($themes as $theme):
-         
             $x = $theme['theme_dirname'];
             $yol = site_url("select-theme/$x");
-            
          ?>
               <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="settings-themes__card settings-themes__card-active">
-                                
                                 <?php if( $settings["site_theme"] != $theme["theme_dirname"] ): ?>
                                 <div class="settings-themes__card-preview" style="background-image: url(https://image.thum.io/get/<?=$yol?>)">
-                                <?php endif;  
-                                    
-                                    if($_SESSION['theme']):
-                                        
-                                        $eye = ' <i class="fa fa-eye"></i>'; 
-                                        
-                                        endif;
-                                    
-                                    if( $settings["site_theme"] == $theme["theme_dirname"] ): echo '<div class="settings-themes__card-preview" style="background-image: url(https://image.thum.io/get/'.$yol.')"><span class="badge">Active'.$eye.'</span>'; endif; ?>  
+                                <?php endif;
+                                    $eye = '';
+                                    if(!empty($_SESSION['theme_preview']) && $_SESSION['theme_preview']['theme'] == $theme['theme_dirname']):
+                                        $eye = ' <i class="fa fa-eye"></i>';
+                                    endif;
+                                    if( $settings["site_theme"] == $theme["theme_dirname"] ):
+                                      echo '<div class="settings-themes__card-preview" style="background-image: url(https://image.thum.io/get/'.$yol.')"><span class="badge">Active'.$eye.'</span>';
+                                    endif;
+                                ?>
                                     <?php if( $settings["site_theme"] != $theme["theme_dirname"] ): ?>
                   <div class="settings-themes__card--activate">
-                                            <a class="btn btn-primary" href="<?php echo site_url('admin/appearance/themes/active/'.$theme["theme_dirname"]) ?>">Activate</a>                                        </div>
+                                            <a class="btn btn-primary" href="<?php echo site_url('admin/appearance/themes/active/'.$theme["theme_dirname"]) ?>">Activate</a>
+                                            <a class="btn btn-default" href="<?php echo site_url('admin/appearance/themes/preview/'.$theme["theme_dirname"]) ?>">Preview</a>
+                                        </div>
                   <?php endif; ?>
-                                                                            
-                                                   
                                                                     </div>
                                 <div class="settings-themes__card-title">
-                                    <?php echo $theme["theme_name"]; ?>                                    
+                                    <?php echo $theme["theme_name"]; ?>
+                                    <small class="display-block" style="font-size:11px;opacity:.8;">v<?php echo $theme['meta_version'] ?? '1.0.0'; ?> · <?php echo $theme['meta_author'] ?? 'Unknown'; ?></small>
                                     <a href="<?php echo site_url('select-theme/'.$theme["theme_dirname"]) ?>" class="btn btn-default btn-xs" target="_blank"><i class="fa fa-eye"></i></a>
                                     <a href="<?php echo site_url('admin/appearance/themes/'.$theme["theme_dirname"]) ?>" class="btn btn-default btn-xs pull-right">Edit</a>
                                 </div>
-                                
+
                             </div>
                         </div>
          <?php endforeach; ?>
- </div></div>     
+ </div></div>
 <?php elseif( route(3) ): ?>
   <div class="col-md-12">
     <div class="panel">
-      <div class="panel-heading edit-theme-title"><strong><?php echo $theme["theme_name"] ?></strong> being held</div>
+      <div class="panel-heading edit-theme-title"><strong><?php echo $theme["theme_name"] ?></strong> theme workspace</div>
 
         <div class="row">
           <div class="col-md-3 padding-md-right-null">
 
             <div class="panel-body edit-theme-body">
               <div class="twig-editor-block">
+                <div class="twig-editor-list-title" data-toggle="collapse" href="#folder_Metadata"><span class="fa fa-info-circle"></span>Metadata</div>
+                <ul class="twig-editor-list collapse in" id="folder_Metadata"><li class="active"><a href="#theme-metadata" data-toggle="tab">Theme Metadata</a></li><li><a href="#theme-settings" data-toggle="tab">Theme Settings</a></li></ul>
                 <?php
                   $layouts  = [
                     "HTML"=>["header.twig","footer.twig","account.twig","addfunds.twig","api.twig",
                     "login.twig","signup.twig","neworder.twig","orders.twig","dripfeeds.twig","subscriptions.twig",
-                    "services.twig","child-panels.twig","tickets.twig","viewticket.twig","blog.twig","blogpost.twig","verify.twig","affiliates.twig", 
+                    "services.twig","child-panels.twig","tickets.twig","viewticket.twig","blog.twig","blogpost.twig","verify.twig","affiliates.twig",
                     "resetpassword.twig",
                     "terms.twig","faq.twig","404.twig"],
                     "CSS"=>["bootstrap.css","style.css"],
@@ -83,8 +83,7 @@
                     else:
                       $active = '';
                     endif;
-                    echo '
-                      <li '. $active .'><a href="'.site_url('admin/appearance/themes/'.$theme["theme_dirname"]).'?file='.$layout.'">'.$layout.'</a></li>';
+                    echo '<li '. $active .'><a href="'.site_url('admin/appearance/themes/'.$theme["theme_dirname"]).'?file='.$layout.'">'.$layout.'</a></li>';
                   endforeach;
                   echo '</ul>';
                 endforeach;
@@ -94,14 +93,48 @@
             </div>
           </div>
           <div class="col-md-9 padding-md-left-null edit-theme__block-editor">
-            <?php if( !$lyt ): ?>
+            <div class="panel-body" style="border-bottom:1px solid #ececec;">
+              <div class="row">
+                <div class="col-md-6">
+                  <a class="btn btn-default btn-sm" href="<?=site_url('admin/appearance/themes/preview/'.$theme['theme_dirname'])?>"><i class="fa fa-eye"></i> Safe Preview</a>
+                  <?php if(!empty($_SESSION['theme_preview'])): ?>
+                    <a class="btn btn-warning btn-sm" href="<?=site_url('admin/appearance/themes/clear-preview')?>">Clear Preview</a>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content">
+              <div class="tab-pane active" id="theme-metadata">
+                <div class="panel-body">
+                  <form action="<?=site_url('admin/appearance/themes/'.$theme['theme_dirname'])?>" method="post">
+                    <input type="hidden" name="action" value="save_theme_metadata">
+                    <div class="form-group"><label>Theme Name</label><input class="form-control" name="meta_name" value="<?=htmlspecialchars($themeMetadata['name'] ?? $theme['theme_name'])?>"></div>
+                    <div class="form-group"><label>Version</label><input class="form-control" name="meta_version" value="<?=htmlspecialchars($themeMetadata['version'] ?? '1.0.0')?>"></div>
+                    <div class="form-group"><label>Author</label><input class="form-control" name="meta_author" value="<?=htmlspecialchars($themeMetadata['author'] ?? 'Unknown')?>"></div>
+                    <button class="btn btn-primary">Save metadata</button>
+                  </form>
+                </div>
+              </div>
+              <div class="tab-pane" id="theme-settings">
+                <div class="panel-body">
+                  <form action="<?=site_url('admin/appearance/themes/'.$theme['theme_dirname'])?>" method="post">
+                    <input type="hidden" name="action" value="save_theme_settings">
+                    <div class="form-group"><label>Primary Color</label><input type="color" class="form-control" name="token_primary" value="<?=htmlspecialchars($themeSetting['token_primary'] ?? '#73a7ff')?>"></div>
+                    <div class="form-group"><label>Card Style</label><select class="form-control" name="card_style"><option value="glass" <?=$themeSetting['card_style']=='glass'?'selected':''?>>Glass</option><option value="soft" <?=$themeSetting['card_style']=='soft'?'selected':''?>>Soft</option><option value="sharp" <?=$themeSetting['card_style']=='sharp'?'selected':''?>>Sharp</option></select></div>
+                    <div class="form-group"><label>UI Density</label><select class="form-control" name="ui_density"><option value="compact" <?=$themeSetting['ui_density']=='compact'?'selected':''?>>Compact</option><option value="comfortable" <?=$themeSetting['ui_density']=='comfortable'?'selected':''?>>Comfortable</option><option value="spacious" <?=$themeSetting['ui_density']=='spacious'?'selected':''?>>Spacious</option></select></div>
+                    <button class="btn btn-primary">Save settings</button>
+                  </form>
+                </div>
+              </div>
+
+              <?php if( !$lyt ): ?>
               <div class="panel-body">
                 <div class="row">
                    <div class="col-md-12">
                     <div class="theme-edit-block">
                       <div class="alert alert-info" role="alert">
-                      Document will be added soon...<br>
-                      You can access the theme codes of the page you want to edit from the left side..
+                      Select a file from the left side to start editing theme source code.
                       </div>
                     </div>
                   </div>
@@ -110,9 +143,8 @@
             <?php else: ?>
                   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/codemirror.min.js"></script>
                   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/mode/xml/xml.min.js"></script>
-                  
-                  <div id="fullscreen">
 
+                  <div id="fullscreen">
                <div class="panel-body">
 
                 <?php
@@ -135,10 +167,9 @@
                                         Edit Full Screen </a>
                                 </div>
                   </div>
-           
 
                 <form action="<?php echo site_url("admin/appearance/themes/".$theme["theme_dirname"]."?file=".$lyt) ?>" method="post" class="twig-editor__form">
-                    
+                  <input type="hidden" name="action" value="update_code">
                   <textarea id="code" name="code" class="codemirror-textarea"><?=$text;?></textarea>
                   <div class="edit-theme-body-buttons text-right">
                     <button class="btn btn-primary click">Update</button>
@@ -147,6 +178,7 @@
 
               </div>
             <?php endif; ?>
+            </div>
           </div>
         </div>
 
@@ -155,4 +187,3 @@
 
 
 <?php endif; ?>
-

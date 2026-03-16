@@ -124,7 +124,16 @@ if (route(0) == 'select-theme')
         exit();
     endif;
 
-    $_SESSION['theme'] = route(1);
+    if ($_SESSION['neira_adminlogin'] == 1 || $settings['demo_mode'] == 1):
+        $_SESSION['theme'] = route(1);
+        if($_SESSION['neira_adminlogin'] == 1){
+            $_SESSION['theme_preview'] = [
+                'theme' => route(1),
+                'expires_at' => time() + 1800,
+                'by' => (int) $_SESSION['neira_userid']
+            ];
+        }
+    endif;
 
     header('Location:' . site_url());
 
@@ -465,6 +474,7 @@ $menuslug = $menus["slug"];
             'description' => $settings['site_description'],
             'data' => $_SESSION['data'],
             'settings' => $settings,
+            'themeTokens' => $settings['theme_tokens'],
             'search' => urldecode($_GET['search']) ,
             'active_menu' => $active_menu,
             'avarageTime' => $avarageTime,
@@ -595,6 +605,7 @@ $menuslug = $menus["slug"];
             'newsList' => $newsList,
             'ordersCount' => $ordersCount,
             'settings' => $settings,
+            'themeTokens' => $settings['theme_tokens'],
             'search' => urldecode($_GET['search']) ,
             'active_menu' => $active_menu,
             'ticketList' => $ticketList,

@@ -435,10 +435,37 @@
       $titleAdmin = "Themes";
     $access = $user["access"]["themes"];
       if( $access ):
-        if( route(3) == "active" && countRow(["table"=>"themes","where"=>["theme_dirname"=>route(4)]]) ):
+        $conn->exec("CREATE TABLE IF NOT EXISTS theme_settings (
+          id INT(11) NOT NULL AUTO_INCREMENT,
+          theme_dirname VARCHAR(120) NOT NULL,
+          token_primary VARCHAR(20) NOT NULL DEFAULT '#73a7ff',
+          card_style ENUM('soft','sharp','glass') NOT NULL DEFAULT 'glass',
+          ui_density ENUM('compact','comfortable','spacious') NOT NULL DEFAULT 'comfortable',
+          token_payload TEXT NULL,
+          updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          PRIMARY KEY (id),
+          UNIQUE KEY uniq_theme_dirname (theme_dirname)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+        if( route(3) == "preview" && countRow(["table"=>"themes","where"=>["theme_dirname"=>route(4)]]) ):
+          $_SESSION["theme_preview"] = [
+            "theme" => route(4),
+            "expires_at" => time() + 1800,
+            "by" => (int) $user["client_id"]
+          ];
+          $_SESSION["theme"] = route(4);
+          header("Location:".site_url()."?theme-preview=1");
+          exit;
+        elseif( route(3) == "clear-preview" ):
+          unset($_SESSION["theme_preview"]);
+          unset($_SESSION["theme"]);
+          header("Location:".site_url("admin/appearance/themes"));
+          exit;
+        elseif( route(3) == "active" && countRow(["table"=>"themes","where"=>["theme_dirname"=>route(4)]]) ):
           $update = $conn->prepare("UPDATE settings SET site_theme=:theme WHERE id=:id ");
           $update->execute(array("id"=>1,"theme"=>route(4)));
           
+          unset($_SESSION["theme_preview"]);
           unset($_SESSION["theme"]);
           
           header("Location:".site_url("admin/appearance/themes"));
@@ -447,6 +474,24 @@
           $theme = $conn->prepare("SELECT * FROM themes WHERE theme_dirname=:name");
           $theme->execute(array("name"=>route(3)));
           $theme = $theme->fetch(PDO::FETCH_ASSOC);
+          $themeExtras = json_decode($theme["theme_extras"], true);
+          if( !is_array($themeExtras) ): $themeExtras = []; endif;
+          $themeMetadata = isset($themeExtras["metadata"]) && is_array($themeExtras["metadata"]) ? $themeExtras["metadata"] : [];
+
+          $themeSetting = $conn->prepare("SELECT * FROM theme_settings WHERE theme_dirname=:theme LIMIT 1");
+          $themeSetting->execute(["theme" => $theme["theme_dirname"]]);
+          $themeSetting = $themeSetting->fetch(PDO::FETCH_ASSOC);
+
+          if( !$themeSetting ):
+            $defaultSetting = $conn->prepare("INSERT INTO theme_settings (theme_dirname) VALUES (:theme)");
+            $defaultSetting->execute(["theme" => $theme["theme_dirname"]]);
+            $themeSetting = [
+              "theme_dirname" => $theme["theme_dirname"],
+              "token_primary" => "#73a7ff",
+              "card_style" => "glass",
+              "ui_density" => "comfortable"
+            ];
+          endif;
             if( substr($lyt, -3) == "css"  ){
               $fn       = "css/panel/".$theme["theme_dirname"]."/".$lyt;
               $codeType = "css";
@@ -461,14 +506,61 @@
               $dir      = "HTML";
             }
           if( $_POST ):
-            $text = $_POST["code"];
-            $text = str_replace("&lt;","<",$text);
-            $text = str_replace("&gt;",">",$text);
-            $text = str_replace("&quot;",'"',$text);
-            $updated_file   = fopen($fn,"w");
-            fwrite($updated_file, $text);
-            fclose($updated_file);
-            header("Location:".site_url("admin/appearance/themes/".$theme["theme_dirname"]."?file=".$lyt));
+            $action = $_POST["action"] ?? "update_code";
+            if( $action == "save_theme_metadata" ):
+              $themeMetadata = [
+                "name" => trim($_POST["meta_name"] ?? $theme["theme_name"]),
+                "version" => trim($_POST["meta_version"] ?? "1.0.0"),
+                "author" => trim($_POST["meta_author"] ?? "Unknown"),
+                "settings_schema" => [
+                  "token_primary" => "color",
+                  "card_style" => ["soft","sharp","glass"],
+                  "ui_density" => ["compact","comfortable","spacious"]
+                ]
+              ];
+              $themeExtras["metadata"] = $themeMetadata;
+              $updateThemeMeta = $conn->prepare("UPDATE themes SET theme_name=:name, theme_extras=:extras WHERE id=:id");
+              $updateThemeMeta->execute([
+                "id" => $theme["id"],
+                "name" => $themeMetadata["name"],
+                "extras" => json_encode($themeExtras, JSON_UNESCAPED_UNICODE)
+              ]);
+              header("Location:".site_url("admin/appearance/themes/".$theme["theme_dirname"]));
+              exit;
+            elseif( $action == "save_theme_settings" ):
+              $tokenPrimary = trim($_POST["token_primary"] ?? "#73a7ff");
+              $cardStyle = $_POST["card_style"] ?? "glass";
+              $uiDensity = $_POST["ui_density"] ?? "comfortable";
+              if( !preg_match('/^#[a-fA-F0-9]{6}$/', $tokenPrimary) ): $tokenPrimary = "#73a7ff"; endif;
+              if( !in_array($cardStyle,["soft","sharp","glass"]) ): $cardStyle = "glass"; endif;
+              if( !in_array($uiDensity,["compact","comfortable","spacious"]) ): $uiDensity = "comfortable"; endif;
+              $tokenPayload = json_encode([
+                "token_primary" => $tokenPrimary,
+                "card_style" => $cardStyle,
+                "ui_density" => $uiDensity
+              ], JSON_UNESCAPED_UNICODE);
+
+              $saveThemeSettings = $conn->prepare("INSERT INTO theme_settings (theme_dirname, token_primary, card_style, ui_density, token_payload) VALUES (:theme,:primary,:card,:density,:payload) ON DUPLICATE KEY UPDATE token_primary=VALUES(token_primary), card_style=VALUES(card_style), ui_density=VALUES(ui_density), token_payload=VALUES(token_payload)");
+              $saveThemeSettings->execute([
+                "theme" => $theme["theme_dirname"],
+                "primary" => $tokenPrimary,
+                "card" => $cardStyle,
+                "density" => $uiDensity,
+                "payload" => $tokenPayload
+              ]);
+              header("Location:".site_url("admin/appearance/themes/".$theme["theme_dirname"]));
+              exit;
+            elseif( $lyt ):
+              $text = $_POST["code"];
+              $text = str_replace("&lt;","<",$text);
+              $text = str_replace("&gt;",">",$text);
+              $text = str_replace("&quot;",'"',$text);
+              $updated_file   = fopen($fn,"w");
+              fwrite($updated_file, $text);
+              fclose($updated_file);
+              header("Location:".site_url("admin/appearance/themes/".$theme["theme_dirname"]."?file=".$lyt));
+              exit;
+            endif;
           endif;
         elseif( route(3) && !countRow(["table"=>"themes","where"=>["theme_dirname"=>route(3)]]) ):
           header("Location:".site_url("admin/appearance/themes"));
@@ -476,6 +568,12 @@
           $themes = $conn->prepare("SELECT * FROM themes ORDER BY id DESC");
           $themes->execute(array());
           $themes = $themes->fetchAll(PDO::FETCH_ASSOC);
+          foreach($themes as $index => $listedTheme):
+            $listedThemeExtras = json_decode($listedTheme["theme_extras"], true);
+            $listedMetadata = isset($listedThemeExtras["metadata"]) && is_array($listedThemeExtras["metadata"]) ? $listedThemeExtras["metadata"] : [];
+            $themes[$index]["meta_version"] = $listedMetadata["version"] ?? "1.0.0";
+            $themes[$index]["meta_author"] = $listedMetadata["author"] ?? "Unknown";
+          endforeach;
         endif;
       endif;
 
