@@ -32,7 +32,7 @@ if ($action == "services_list"):
             if ($_SESSION["data"]["services"] == $service['service_id']):
                 $serviceList .= "selected";
             endif;
-            $serviceList .= ">" . $service["service_id"] . " - " . $name . " - " . priceFormat(service_price($service["service_id"]) * $currency['value']) . $currency['symbol'] . "</option>";
+            $serviceList .= ">" . $service["service_id"] . " - " . $name . " - " . formatCurrencyAmount(service_price($service["service_id"]) * $currency['value'], $currency) . "</option>";
         endif;
     }
     
@@ -304,15 +304,15 @@ elseif ($action == "service_detail"):
     $quantity = $_POST["quantity"];
     if ($s_id != 0 && $dripfeed == "bos"):
         $price = $quantity * $service["service_price"] / 1000;
-        $data = ['details' => $serviceDetails, 'price' => priceFormat($price *  $currency['value']) . $currency['symbol']];
+        $data = ['details' => $serviceDetails, 'price' => formatCurrencyAmount($price *  $currency['value'], $currency)];
     elseif ($s_id != 0 && $dripfeed == "var"):
         $price = $runs * $quantity * $service["service_price"] / 1000;
-        $data = ['details' => $serviceDetails, 'price' => priceFormat($price *  $currency['value']) . $currency['symbol']];
+        $data = ['details' => $serviceDetails, 'price' => formatCurrencyAmount($price *  $currency['value'], $currency)];
     elseif ($s_id != 0 && !isset($dripfeed) && $service["service_package"] != 2):
         $data = ['details' => $serviceDetails];
     elseif(!isset($dripfeed) && $service["service_package"] == 2):
         $price = $service["service_price"];
-        $data = ['details' => $serviceDetails, 'price'=>priceFormat($price *  $currency['value']) . $currency['symbol']];
+        $data = ['details' => $serviceDetails, 'price'=>formatCurrencyAmount($price *  $currency['value'], $currency)];
     else:
         $data = ['empty' => 1];
     endif;
@@ -350,17 +350,15 @@ elseif ($action == "service_price"):
     
     if ($quantity == 0)
     {
-        $totalPrice = service_price($service)*  $currency['value'] . $currency['symbol'];
+        $totalPrice = formatCurrencyAmount(service_price($service)*  $currency['value'], $currency);
     }
     elseif ($dripfeed == "var")
     {
-        $totalPrice = priceFormat($price * $quantity * $runs *  $currency['value']);
-        $totalPrice .= $currency['symbol'];
+        $totalPrice = formatCurrencyAmount($price * $quantity * $runs *  $currency['value'], $currency);
     }
     else
     {
-        $totalPrice = priceFormat($price * $quantity *  $currency['value']);
-        $totalPrice .= $currency['symbol'];
+        $totalPrice = formatCurrencyAmount($price * $quantity *  $currency['value'], $currency);
     }
     
     echo json_encode(['price' => $totalPrice, 'commentsCount' => $quantity, 'totalQuantity' => $runs * $quantity]);

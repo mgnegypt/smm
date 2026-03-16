@@ -27,7 +27,7 @@
 								<td>{{ site['url'] }}/ref/{{ user["referral_code"] }}</td>
 								<td>{{ settings["ref_bonus"] }}%</td>
 								<td>{% if settings["ref_type"] == 1 %}{{ lang['affiliates.type.first'] }}{% else %}{{ lang['affiliates.type.all'] }}{% endif %}</td>
-								<td>{{ settings['ref_min'] }}{{ site['currency'] }}</td>
+								<td>{{ money(settings['ref_min'], currency) }}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -50,8 +50,8 @@
 							<tr class="text-white">
 							    <td>{{ user['total_click'] }}</td>
 								<td>{{ refCount }}</td>
-								<td>{{ user['reforder'] }}{{ site['currency'] }}</td>
-								<td>{{ user['refchar'] }}{{ site['currency'] }}</td>
+								<td>{{ money(user['reforder'], currency) }}</td>
+								<td>{{ money(user['refchar'], currency) }}</td>
 							</tr>
 						</tbody>
 					</table>

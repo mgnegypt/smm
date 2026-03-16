@@ -111,7 +111,16 @@ $settings['theme_tokens'] = $themeTokens;
 $loader   = new Twig_Loader_Filesystem('themes/panel/'.THEME);
 $twig     = new Twig_Environment($loader, ['autoescape' => false]);
 
+$twig->addFunction(new Twig_SimpleFunction('money', function ($amount, $currencyData = null, $decimals = 2) {
+  if (!is_array($currencyData)) {
+    $currencyData = getSystemCurrency();
+  }
+  return formatCurrencyAmount($amount, $currencyData, $decimals);
+}));
 
+foreach ( glob(__DIR__.'/glyconFunc/*.php') as $helper ) {
+  require $helper;
+}
 
 $user = $conn->prepare('SELECT * FROM clients WHERE client_id=:id');
 $user->execute(array('id'=>$_SESSION['neira_userid'] ));
@@ -119,30 +128,25 @@ $user = $user->fetch(PDO::FETCH_ASSOC);
 $user['auth']     = $_SESSION['neira_userlogin'];
 $user['access']   = json_decode($user['access'],true);
 $user['u_balance'] = $user['balance'];
-$user['balance'] = $user['balance'].''.@$currency;
-
 
 $currency = [];
-    
-    if($user["auth"]  == 1){
-    $currency = $conn->prepare("SELECT * FROM currency WHERE id=:id");
-    $currency->execute(array("id"=>$user["currency"]));
-    $currency = $currency->fetch(PDO::FETCH_ASSOC);
-    }
-    
-   
-    
-    if($user["auth"]  != 1 || !$currency['id']){
-    $currency = $conn->prepare("SELECT * FROM currency WHERE id=:id");
-    $currency->execute(array("id"=>$settings['site_currency']));
-    $currency = $currency->fetch(PDO::FETCH_ASSOC);
-    }
-    
-    
-foreach ( glob(__DIR__.'/glyconFunc/*.php') as $helper ) {
-  require $helper;
+
+if($user["auth"] == 1){
+  $currency = $conn->prepare("SELECT * FROM currency WHERE id=:id");
+  $currency->execute(array("id"=>$user["currency"]));
+  $currency = $currency->fetch(PDO::FETCH_ASSOC);
 }
 
+if($user["auth"] != 1 || empty($currency['id'])){
+  $currency = getSystemCurrency();
+}
+
+$settings['site_currency'] = $currency['id'] ?? $settings['site_currency'];
+$settings['site_currency_code'] = strtoupper($currency['name'] ?? 'EGP');
+$settings['site_currency_symbol'] = $currency['symbol'] ?? 'EGP';
+$user['balance'] = formatCurrencyAmount($user['u_balance'] * ((float)($currency['value'] ?? 1)), $currency);
+    
+    
 foreach ( glob(__DIR__.'/classes/*.php') as $class ) {
   require $class;
 }

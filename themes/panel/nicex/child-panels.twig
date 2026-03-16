@@ -57,7 +57,7 @@
                                        <div class="form-group mb-4">
                                           <label>{{ lang["childpanels.panel.amount"] }}</label>
                                           <div class="input-group">
-                                             <input type="text" class="form-control" value="{{ settings['panel_price'] * currency['value']}}{{ currency['symbol'] }}" disabled>
+                                             <input type="text" class="form-control" value="{{ money(settings['panel_price'] * currency['value'], currency) }}" disabled>
                                           </div>
                                        </div>
 									   <!-- form-group end -->

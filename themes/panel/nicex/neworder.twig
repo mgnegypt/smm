@@ -58,7 +58,7 @@
                   </div>
                   <div class="col-auto d-none d-md-block">
                      <div>
-                        <h3 class="ulevel-t-3">{{ currency["symbol"]  }} {{ (user["balance"]*currency["value"]) |round(2, 'floor') }}</h3>
+                        <h3 class="ulevel-t-3">{{ money(user['u_balance'] * (currency['value'] ?? 1), currency) }}</h3>
                      </div>
                      <a href="/addfunds" class="btn btn-primary">{{lang["smmspot.orders.no.order.text3"]}}</a>
                   </div>
@@ -90,7 +90,7 @@
                          {{lang["smmspot.neworder.total.balance.title"]}}
                         </div>
                         <div class="ui-text">
-                          {{ currency["symbol"]  }} {{ (user["balance"]*currency["value"]) |round(2, 'floor') }}
+                          {{ money(user['u_balance'] * (currency['value'] ?? 1), currency) }}
                         </div>
                      </div>
                   </div>
@@ -118,7 +118,7 @@
                           {{lang["smmspot.neworder.balance.status"]}}
                         </div>
                         <div class="ui-text">
-                           {% if user['balance'] > 10 %}
+                           {% if user['u_balance'] > 10 %}
                            {{lang["cerulean.normal"]}}
                            {% else %}
                            {{lang["cerulean.low"]}}
