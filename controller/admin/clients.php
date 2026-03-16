@@ -450,11 +450,44 @@
              
     }else{
         
+    if (!function_exists('ensureNotificationsSchema')) {
+      function ensureNotificationsSchema($conn)
+      {
+        $columns = [];
+        $query = $conn->query("SHOW COLUMNS FROM notifications");
+        if ($query) {
+          foreach ($query->fetchAll(PDO::FETCH_ASSOC) as $column) {
+            $columns[$column['Field']] = true;
+          }
+        }
+
+        $alterParts = [];
+        if (!isset($columns['is_read'])) {
+          $alterParts[] = "ADD COLUMN is_read TINYINT(1) NOT NULL DEFAULT 0";
+        }
+        if (!isset($columns['read_at'])) {
+          $alterParts[] = "ADD COLUMN read_at DATETIME NULL DEFAULT NULL";
+        }
+        if (!isset($columns['type'])) {
+          $alterParts[] = "ADD COLUMN type VARCHAR(50) NOT NULL DEFAULT 'general'";
+        }
+
+        if (!empty($alterParts)) {
+          $conn->exec("ALTER TABLE notifications ".implode(', ', $alterParts));
+        }
+      }
+    }
+
     $subject  = $_POST["subject"];
     $type     = $_POST["alert_type"];
     $message  = $_POST["message"];
     $user     = $_POST["user_type"];
     $username = $_POST["username"];
+    $groupUsersRaw = $_POST["group_usernames"];
+    $notificationCategory = trim($_POST["notification_type"]);
+    if ($notificationCategory == "") {
+      $notificationCategory = "general";
+    }
       if( $user == "secret" && !getRow(["table"=>"clients","where"=>["username"=>$username]]) ):
         $error    = 1;
         $errorText= "User not found";
@@ -463,6 +496,59 @@
         $error    = 1;
         $errorText= "Notification Message cannot be empty";
         $icon     = "error";
+      elseif( $type == "site" ):
+        ensureNotificationsSchema($conn);
+
+        $targetClientIds = [];
+
+        if ($user == "all") {
+          $usersStmt  = $conn->prepare("SELECT client_id FROM clients");
+          $usersStmt->execute();
+          $usersRows = $usersStmt->fetchAll(PDO::FETCH_ASSOC);
+          foreach ($usersRows as $targetUser) {
+            $targetClientIds[] = (int) $targetUser["client_id"];
+          }
+        } elseif ($user == "secret") {
+          $targetUser = getRow(["table"=>"clients","where"=>["username"=>$username]]);
+          if ($targetUser) {
+            $targetClientIds[] = (int) $targetUser["client_id"];
+          }
+        } elseif ($user == "group") {
+          $groupUsernames = preg_split('/[\s,]+/', (string) $groupUsersRaw);
+          $groupUsernames = array_filter(array_map('trim', $groupUsernames));
+          if (!empty($groupUsernames)) {
+            $placeholders = implode(',', array_fill(0, count($groupUsernames), '?'));
+            $usersStmt = $conn->prepare("SELECT client_id FROM clients WHERE username IN ({$placeholders})");
+            $usersStmt->execute(array_values($groupUsernames));
+            $usersRows = $usersStmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($usersRows as $targetUser) {
+              $targetClientIds[] = (int) $targetUser["client_id"];
+            }
+          }
+        }
+
+        $targetClientIds = array_values(array_unique(array_filter($targetClientIds)));
+
+        if (empty($targetClientIds)) {
+          $error = 1;
+          $errorText= "No target users found";
+          $icon = "error";
+        } else {
+          $insertStmt = $conn->prepare("INSERT INTO notifications SET client_id=:client_id, title=:title, content=:content, type=:type, is_read=0, read_at=NULL");
+          foreach ($targetClientIds as $targetClientId) {
+            $insertStmt->execute([
+              "client_id" => $targetClientId,
+              "title" => $subject ?: "Notification",
+              "content" => $message,
+              "type" => $notificationCategory
+            ]);
+          }
+
+          $error    = 1;
+          $errorText= "Transaction successful";
+          $icon     = "success";
+        }
+
       elseif( $type == "email" && $user == "all" ):
           
     ## tüm üyelerin bilgilerini aldık başla ##      
@@ -501,6 +587,33 @@
           $errorText= "Operation failed";
           $icon     = "error";
         endif;
+      elseif( $type == "email" && $user == "group" ):
+        $groupUsernames = preg_split('/[\s,]+/', (string) $groupUsersRaw);
+        $groupUsernames = array_filter(array_map('trim', $groupUsernames));
+        if (empty($groupUsernames)) {
+          $error = 1;
+          $errorText= "Please provide group usernames";
+          $icon = "error";
+        } else {
+          $placeholders = implode(',', array_fill(0, count($groupUsernames), '?'));
+          $usersStmt  = $conn->prepare("SELECT email FROM clients WHERE username IN ({$placeholders})");
+          $usersStmt->execute(array_values($groupUsernames));
+          $usersRows  = $usersStmt->fetchAll(PDO::FETCH_ASSOC);
+          $email= array();
+          foreach ($usersRows as $u):
+            $email[]  = $u["email"];
+          endforeach;
+          if (!empty($email)) {
+            sendMail(["subject"=>$subject,"body"=>$message,"mail"=>$email]);
+            $error    = 1;
+            $errorText= "Transaction successful";
+            $icon     = "success";
+          } else {
+            $error = 1;
+            $errorText= "No target users found";
+            $icon = "error";
+          }
+        }
       elseif( $type == "sms" && $user == "secret" ):
           $user= getRow(["table"=>"clients","where"=>["username"=>$username]]);
           $sms = SMSUser($user["telephone"],$message);
@@ -513,6 +626,39 @@
               $errorText= "Operation failed";
               $icon     = "error";
             endif;
+      elseif( $type == "sms" && $user == "group" ):
+        $groupUsernames = preg_split('/[\s,]+/', (string) $groupUsersRaw);
+        $groupUsernames = array_filter(array_map('trim', $groupUsernames));
+        if (empty($groupUsernames)) {
+          $error = 1;
+          $errorText= "Please provide group usernames";
+          $icon = "error";
+        } else {
+          $placeholders = implode(',', array_fill(0, count($groupUsernames), '?'));
+          $usersStmt  = $conn->prepare("SELECT telephone FROM clients WHERE username IN ({$placeholders})");
+          $usersStmt->execute(array_values($groupUsernames));
+          $usersRows  = $usersStmt->fetchAll(PDO::FETCH_ASSOC);
+          $tel = "";
+          foreach ($usersRows as $u):
+            $tel .= "<no>".$u["telephone"]."</no>";
+          endforeach;
+          if (!empty($tel)) {
+            $sms = SMSToplu($tel,$message);
+            if( $sms ):
+              $error    = 1;
+              $errorText= "Transaction successful";
+              $icon     = "success";
+            else:
+              $error    = 1;
+              $errorText= "Operation failed";
+              $icon     = "error";
+            endif;
+          } else {
+            $error = 1;
+            $errorText= "No target users found";
+            $icon = "error";
+          }
+        }
       elseif( $type == "sms" && $user == "all" ):
         $users  = $conn->prepare("SELECT * FROM clients ");
         $users->execute(array());
