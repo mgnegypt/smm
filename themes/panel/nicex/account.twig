@@ -1,115 +1,222 @@
 {% include 'header.twig' %}
 <div class="app-content">
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
 
-      {% if error %}
-        <div class="alert alert-dismissible alert-danger">
-          <button type="button" class="close" data-dismiss="alert">×</button>
-          {{ errorText }}
-        </div>
-      {% endif %}
-      {% if success %}
-        <div class="alert alert-dismissible alert-success">
-          <button type="button" class="close" data-dismiss="alert">×</button>
-          {{ successText }}
-        </div>
-      {% endif %}
-
-      <div class="g-card mb-3">
-        <div class="g-card-body">
-        <div class="form-group">
-          <label for="charge" class="control-label">{{ lang['account.username'] }}</label>
-          <input type="text" class="form-control" value="{{ user['username'] }}" readonly>
-        </div>
-        <div class="form-group">
-          <label for="charge" class="control-label">{{ lang['account.spent'] }}</label>
-          <input type="text" class="form-control" value="{{ user['spent'] }}{{ site['currency'] }}" readonly>
-        </div>
-      </div>
-    </div>
-
-      <div class="g-card mb-3">
-        <div class="g-card-body">
-        <form method="post" action="account">
-          <div class="form-group">
-            <label for="charge" class="control-label">{{ lang['account.password.current'] }}</label>
-            <input type="password" class="form-control" name="current_password">
+        {% if error %}
+          <div class="alert alert-dismissible alert-danger">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ errorText }}
           </div>
-
-          <div class="form-group">
-            <label for="charge" class="control-label">{{ lang['account.password.new'] }}</label>
-            <input type="password" class="form-control" name="password">
+        {% endif %}
+        {% if success %}
+          <div class="alert alert-dismissible alert-success">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ successText }}
           </div>
+        {% endif %}
 
-          <div class="form-group">
-            <label for="charge" class="control-label">{{ lang['account.password.confirm'] }}</label>
-            <input type="password" class="form-control" name="confirm_password">
-          </div>
-          <button type="submit" class="btn btn-primary">{{ lang['account.password.button'] }}</button>
-        </form>
-      </div>
-    </div>
-
-      {% if site['languages']|length > 1 %}
         <div class="g-card mb-3">
-        <div class="g-card-body">
-          <form method="post" action="account/change_lang">
+          <div class="g-card-body">
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="active"><a href="#account-data" role="tab" data-toggle="tab"><i class="fa fa-user"></i> {{ lang['account.tabs.data'] }}</a></li>
+              <li><a href="#account-security" role="tab" data-toggle="tab"><i class="fa fa-lock"></i> {{ lang['account.tabs.security'] }}</a></li>
+              <li><a href="#account-avatar" role="tab" data-toggle="tab"><i class="fa fa-image"></i> {{ lang['account.tabs.avatar'] }}</a></li>
+              <li><a href="#account-finance" role="tab" data-toggle="tab"><i class="fa fa-line-chart"></i> {{ lang['account.tabs.finance'] }}</a></li>
+            </ul>
 
-            <div class="form-group">
-              <label for="charge" class="control-label">{{ lang['account.changelang.title'] }}</label>
-              <select class="form-control" name="lang">
-                  {% for language in site['languages'] %}
-                  <option {% if language["code"] == user["lang"] %} selected {% endif %} value="{{ language["code"] }}">{{ language["name"] }}</option>
-                  {% endfor %}
-              </select>
+            <div class="tab-content" style="padding-top:20px;">
+              <div class="tab-pane active" id="account-data">
+                <form method="post" action="account/profile">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">{{ lang['account.display_name'] }}</label>
+                        <input type="text" class="form-control" name="display_name" value="{{ user['display_name'] ?: user['username'] }}" required>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">{{ lang['account.username'] }}</label>
+                        <input type="text" class="form-control" value="{{ user['username'] }}" readonly>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">{{ lang['account.name'] }}</label>
+                        <input type="text" class="form-control" name="first_name" value="{{ user['first_name'] }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">{{ lang['account.surname'] }}</label>
+                        <input type="text" class="form-control" name="last_name" value="{{ user['last_name'] }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">{{ lang['account.email'] }}</label>
+                        <input type="email" class="form-control" value="{{ user['email'] }}" readonly>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">{{ lang['account.telephone'] }}</label>
+                        <input type="text" class="form-control" name="telephone" value="{{ user['telephone'] }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label">{{ lang['account.bio'] }}</label>
+                    <textarea class="form-control" rows="4" name="bio">{{ user['bio'] }}</textarea>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> {{ lang['account.profile.save'] }}</button>
+                </form>
+
+                {% if site['languages']|length > 1 %}
+                  <hr>
+                  <form method="post" action="account/change_lang">
+                    <div class="form-group">
+                      <label class="control-label">{{ lang['account.changelang.title'] }}</label>
+                      <select class="form-control" name="lang">
+                        {% for language in site['languages'] %}
+                          <option {% if language["code"] == user["lang"] %} selected {% endif %} value="{{ language["code"] }}">{{ language["name"] }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-language"></i> {{ lang['account.changelang.button'] }}</button>
+                  </form>
+                {% endif %}
+
+                <hr>
+                <form method="post" action="account/timezone">
+                  <div class="form-group">
+                    <label class="control-label">{{ lang['account.timezone.title'] }}</label>
+                    <select class="form-control" name="timezone">
+                      {% for timezone in timezones %}
+                        <option {% if timezone["timezone"] == user['timezone'] %} selected {% endif %} value="{{ timezone["timezone"] }}">{{ timezone["label"] }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary"><i class="fa fa-clock-o"></i> {{ lang['account.timezone.button'] }}</button>
+                </form>
+              </div>
+
+              <div class="tab-pane" id="account-security">
+                <form method="post" action="account/security">
+                  <div class="form-group">
+                    <label class="control-label">{{ lang['account.password.current'] }}</label>
+                    <input type="password" class="form-control" name="current_password" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label">{{ lang['account.password.new'] }}</label>
+                    <input type="password" class="form-control" name="password" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label">{{ lang['account.password.confirm'] }}</label>
+                    <input type="password" class="form-control" name="confirm_password" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary"><i class="fa fa-key"></i> {{ lang['account.password.button'] }}</button>
+                </form>
+
+                <hr>
+                <form method="post" action="account/newapikey">
+                  <div class="form-group">
+                    <label class="control-label">API Link</label>
+                    <input type="text" class="form-control" value="{{ site['url'] }}/api/v2" readonly>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label">API Key</label>
+                    <input type="text" class="form-control" value="{{ user['apikey'] }}" readonly>
+                  </div>
+                  <button type="submit" class="btn btn-primary"><i class="fa fa-refresh"></i> {{ lang['account.generate.key'] }}</button>
+                </form>
+              </div>
+
+              <div class="tab-pane" id="account-avatar">
+                <div class="text-center" style="margin-bottom:20px;">
+                  {% set avatarPath = user['avatar'] ?: 'assets/images/avatar-placeholder.svg' %}
+                  <img src="{{ avatarPath }}" alt="avatar" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12);">
+                </div>
+
+                <form method="post" action="account/avatar" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label class="control-label">{{ lang['account.avatar.upload'] }}</label>
+                    <input type="file" class="form-control" name="avatar" accept="image/png,image/jpeg,image/webp" required>
+                    <p class="help-block">{{ lang['account.avatar.hint'] }}</p>
+                  </div>
+                  <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> {{ lang['account.avatar.button'] }}</button>
+                </form>
+              </div>
+
+              <div class="tab-pane" id="account-finance">
+                <div class="row">
+                  <div class="col-sm-6 col-md-3">
+                    <div class="well well-sm text-center">
+                      <h5>{{ lang['account.summary.deposit'] }}</h5>
+                      <strong>{{ financialSummary['total_deposit']|number_format(2) }} {{ site['currency'] }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <div class="well well-sm text-center">
+                      <h5>{{ lang['account.summary.spent'] }}</h5>
+                      <strong>{{ financialSummary['total_spent']|number_format(2) }} {{ site['currency'] }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <div class="well well-sm text-center">
+                      <h5>{{ lang['account.summary.balance'] }}</h5>
+                      <strong>{{ financialSummary['current_balance']|number_format(2) }} {{ site['currency'] }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <div class="well well-sm text-center">
+                      <h5>{{ lang['account.summary.avg_order'] }}</h5>
+                      <strong>{{ financialSummary['avg_order_value']|number_format(2) }} {{ site['currency'] }}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="well well-sm text-center">
+                      <h5>{{ lang['account.summary.total_orders'] }}</h5>
+                      <strong>{{ financialSummary['total_orders'] }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="well well-sm text-center">
+                      <h5>{{ lang['account.summary.completed_orders'] }}</h5>
+                      <strong>{{ financialSummary['completed_orders'] }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="well well-sm text-center">
+                      <h5>{{ lang['account.summary.pending_payments'] }}</h5>
+                      <strong>{{ financialSummary['pending_payments'] }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            <button type="submit" class="btn btn-primary">{{ lang['account.changelang.button'] }}</button>
-          </form>
+          </div>
         </div>
+
       </div>
-       {% endif %}
-
-       <div class="g-card mb-3">
-        <div class="g-card-body">
-         <form method="post" action="account/timezone">
-
-           <div class="form-group">
-             <label for="charge" class="control-label">{{ lang['account.timezone.title'] }}</label>
-             <select class="form-control" name="timezone">
-                 {% for timezone in timezones %}
-                 <option {% if timezone["timezone"] == user['timezone'] %} selected {% endif %} value="{{ timezone["timezone"] }}">{{ timezone["label"] }}</option>
-                 {% endfor %}
-             </select>
-           </div>
-
-           <button type="submit" class="btn btn-primary">{{ lang['account.timezone.button'] }}</button>
-         </form>
-       </div>
-      </div>
-
-      <div class="g-card mb-3">
-        <div class="g-card-body">
-        <form method="post" action="account/newapikey">
-          <div class="form-group">
-            <label for="charge" class="control-label">API Link</label>
-            <input type="text" class="form-control" value="{{ site['url'] }}/api/v2" readonly>
-          </div>
-
-          <div class="form-group">
-            <label for="charge" class="control-label">API Key</label>
-            <input type="text" class="form-control" value="{{ user['apikey'] }}" readonly>
-          </div>
-          <button type="submit" class="btn btn-primary">{{ lang['account.generate.key'] }}</button>
-        </form>
-      </div>
-      </div>
-
     </div>
   </div>
-</div>
 </div>
 
 {% include 'footer.twig' %}
