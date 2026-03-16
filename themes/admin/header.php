@@ -1,5 +1,22 @@
 <!DOCTYPE html>
-<html lang='tr'>
+<?php
+$adminLangCode = 'en';
+$adminDirection = 'ltr';
+try {
+  $activeLanguage = $conn->prepare("SELECT language_code FROM languages WHERE default_language=:default LIMIT 1");
+  $activeLanguage->execute(["default" => 1]);
+  $activeLanguage = $activeLanguage->fetch(PDO::FETCH_ASSOC);
+  if (!empty($activeLanguage['language_code'])) {
+    $adminLangCode = $activeLanguage['language_code'];
+  }
+} catch (Exception $exception) {
+  $adminLangCode = 'en';
+}
+if (in_array(strtolower($adminLangCode), ['ar', 'he', 'fa', 'ur'], true)) {
+  $adminDirection = 'rtl';
+}
+?>
+<html lang='<?=htmlspecialchars($adminLangCode, ENT_QUOTES, "UTF-8")?>' dir='<?=$adminDirection?>'>
 <head>
 <base href='<?=site_url()?>'>
 <meta charset='utf-8'>
@@ -8,15 +25,15 @@
 <title><?php
 
 if(route(2) == 1 || route(2) == 'read' || route(1) == 'payment'){
-echo title2('tr',route(1));    
+echo title2($adminLangCode,route(1));    
 }elseif(route(2) == 'payments' && route(1) == 'reports' ){
-echo title2('tr',route(1));    
+echo title2($adminLangCode,route(1));    
 }elseif(route(2) == 'orders' && route(1) == 'reports' ){
-echo title2('tr',route(1));    
+echo title2($adminLangCode,route(1));    
 }elseif(route(2)){
-echo title2('tr',route(1),route(2));
+echo title2($adminLangCode,route(1),route(2));
 }else{
-echo title2('tr',route(1));
+echo title2($adminLangCode,route(1));
 }
 ?>
 </title>
@@ -48,7 +65,7 @@ echo title2('tr',route(1));
 <div class='container-fluid'>
 <div class='navbar-header'>
 <button type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#bs-navbar-collapse'>
-<span class='sr-only'>Toggle navigation</span>
+<span class='sr-only'><?= $languageArray['admin.layout.header.toggle_navigation'] ?? 'Toggle navigation' ?></span>
 <span class='icon-bar'></span>
 <span class='icon-bar'></span>
 <span class='icon-bar'></span>
@@ -58,10 +75,10 @@ echo title2('tr',route(1));
 <ul id='navResponsive' class='nav navbar-nav navbar-left-block'>
 <?php if( $user['access']['admin_access']  && $_SESSION['neira_adminlogin']  ): ?>
 <?php if( $user['access']['users'] ): ?>
-<li class='<?php if( route(1) == 'clients' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/clients') ?>'><i class='fa fa-users'></i> Users</a></li>
+<li class='<?php if( route(1) == 'clients' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/clients') ?>'><i class='fa fa-users'></i> <?= $languageArray['admin.header.nav.users'] ?? 'Users' ?></a></li>
 <?php endif; ?>  
 <?php if( $user['access']['orders'] ): ?>    
-<li class='<?php if( route(1) == 'orders' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/orders') ?>'><i class='fa fa-shopping-cart'></i> Orders</a></li>
+<li class='<?php if( route(1) == 'orders' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/orders') ?>'><i class='fa fa-shopping-cart'></i> <?= $languageArray['admin.header.nav.orders'] ?? 'Orders' ?></a></li>
 <?php endif; ?>
 <?php if( $user['access']['subscriptions'] ): 
 
@@ -72,16 +89,16 @@ $a4 = countRow(['table'=>'services','where'=>['service_package'=>14]]);
 $a5 = countRow(['table'=>'services','where'=>['service_package'=>15]]);?>  
 
 <?php if($a1>0 || $a2>0 || $a3>0 || $a4>0 || $a5>0):	?>
-<li class='<?php if( route(1) == 'subscriptions' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/subscriptions') ?>'>Subscriptions</a></li>
+<li class='<?php if( route(1) == 'subscriptions' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/subscriptions') ?>'><?= $languageArray['admin.header.nav.subscriptions'] ?? 'Subscriptions' ?></a></li>
 <?php endif; endif; ?>
 <?php if( $user['access']['dripfeed'] ): ?>  
 <?php if(countRow(['table'=>'services','where'=>['service_dripfeed'=>2]])>0):	?>
-<li class='<?php if( route(1) == 'dripfeeds' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/dripfeeds') ?>'> Drip-feed</a></li>
+<li class='<?php if( route(1) == 'dripfeeds' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/dripfeeds') ?>'> <?= $languageArray['admin.header.nav.dripfeed'] ?? 'Drip-feed' ?></a></li>
 <?php endif; endif; ?>
 
 <?php if( $user['access']['tasks'] ): ?>       
 <?php if( countRow(['table'=>'tasks'])): ?>
-<li class='<?php if( route(1) == 'tasks' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/tasks') ?>'>Tasks 
+<li class='<?php if( route(1) == 'tasks' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/tasks') ?>'><?= $languageArray['admin.header.nav.tasks'] ?? 'Tasks' ?> 
 <?php if( countRow(['table'=>'tasks','where'=>['task_status'=>'pending']]) ): ?> 
 <span class='badge' style='background-color: #6d47bb'><?=countRow(['table'=>'tasks','where'=>['task_status'=>'pending']]);?></span>
 <?php endif; ?> 
@@ -91,39 +108,39 @@ $a5 = countRow(['table'=>'services','where'=>['service_package'=>15]]);?>
 
 
 <?php if( $user['access']['services'] ): ?>    
-<li class='<?php if( route(1) == 'services' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/services') ?>'><i class='fa fa-cogs'></i> Services</a></li>
+<li class='<?php if( route(1) == 'services' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/services') ?>'><i class='fa fa-cogs'></i> <?= $languageArray['admin.header.nav.services'] ?? 'Services' ?></a></li>
 <?php endif; ?>  
 <?php if( $user['access']['payments'] ): ?>
-<li class='<?php if( route(1) == 'payments' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/payments') ?>'> Payments <?php if(countRow(['table'=>'payments','where'=>['payment_method'=>7,'payment_status'=>1]])): ?><span class='badge' style='background-color: #6d47bb'><?=countRow(['table'=>'payments','where'=>['payment_method'=>7,'payment_status'=>1]]);?></span> <?php endif; ?></a></li>
+<li class='<?php if( route(1) == 'payments' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/payments') ?>'> <?= $languageArray['admin.header.nav.payments'] ?? 'Payments' ?> <?php if(countRow(['table'=>'payments','where'=>['payment_method'=>7,'payment_status'=>1]])): ?><span class='badge' style='background-color: #6d47bb'><?=countRow(['table'=>'payments','where'=>['payment_method'=>7,'payment_status'=>1]]);?></span> <?php endif; ?></a></li>
 <?php endif; ?>     
 <?php if( $user['access']['tickets'] ): ?>       
-<li class='<?php if( route(1) == 'tickets' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/tickets') ?>'><i class='fa fa-life-ring'></i> Support <?php if( countRow(['table'=>'tickets','where'=>['client_new'=>2]]) ): ?> <span class='badge' style='background-color: #6d47bb'><?=countRow(['table'=>'tickets','where'=>['client_new'=>2]]);?></span><?php endif; ?> </a></li>
+<li class='<?php if( route(1) == 'tickets' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/tickets') ?>'><i class='fa fa-life-ring'></i> <?= $languageArray['admin.header.nav.support'] ?? 'Support' ?> <?php if( countRow(['table'=>'tickets','where'=>['client_new'=>2]]) ): ?> <span class='badge' style='background-color: #6d47bb'><?=countRow(['table'=>'tickets','where'=>['client_new'=>2]]);?></span><?php endif; ?> </a></li>
 <?php endif; ?>
 
 
           
-<li class='<?php if( route(1) == 'appearance' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/appearance') ?>'><i class='fa fa-paint-brush'></i> Appearance</a></li> 
+<li class='<?php if( route(1) == 'appearance' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/appearance') ?>'><i class='fa fa-paint-brush'></i> <?= $languageArray['admin.header.nav.appearance'] ?? 'Appearance' ?></a></li> 
 
-<li class='<?php if( route(1) == 'settings' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/settings') ?>'><i class='fa fa-sliders'></i> Settings</a></li>
+<li class='<?php if( route(1) == 'settings' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/settings') ?>'><i class='fa fa-sliders'></i> <?= $languageArray['admin.header.nav.settings'] ?? 'Settings' ?></a></li>
 
 
 <?php endif; ?>
 
 <li class="" class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class='fa fa-plus-circle'></i> Additionals<span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class='fa fa-plus-circle'></i > <?= $languageArray['admin.header.nav.additionals'] ?? 'Additionals' ?><span class="caret"></span></a>
               <ul class="dropdown-menu dropdown-max-height">
 <?php if( $user['access']['reports'] ): ?>
-<li class='<?php if( route(1) == 'reports' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/reports') ?>'><i class='fa fa-line-chart'></i> Statistics</a></li> 
+<li class='<?php if( route(1) == 'reports' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/reports') ?>'><i class='fa fa-line-chart'></i> <?= $languageArray['admin.header.nav.statistics'] ?? 'Statistics' ?></a></li> 
 <?php endif; ?>
 
 <?php if( $user['access']['logs'] ): ?>
-<li class='<?php if( route(1) == 'logs' || route(1) == 'provider_logs' || route(1) == 'guard_logs' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/logs') ?>'><i class='fa fa-file-text-o'></i> Logs <?php if(countRow(['table'=>'guard_log'])): ?>
+<li class='<?php if( route(1) == 'logs' || route(1) == 'provider_logs' || route(1) == 'guard_logs' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/logs') ?>'><i class='fa fa-file-text-o'></i> <?= $languageArray['admin.header.nav.logs'] ?? 'Logs' ?> <?php if(countRow(['table'=>'guard_log'])): ?>
 <span class='badge' style='background-color: #6d47bb'><?=countRow(['table'=>'guard_log']);?></span>
 <?php endif; ?></a></li> 
 <?php endif; ?>
 
 <?php if( $settings['panel_selling'] == 2 || countRow(['table'=>'child_panels','where'=>['panel_status'=>'active']])): ?>
-<li class='<?php if( route(1) == 'child-panels' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/child-panels') ?>' ><i class='fa fa-sitemap'></i> Child Panels 
+<li class='<?php if( route(1) == 'child-panels' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/child-panels') ?>' ><i class='fa fa-sitemap'></i> <?= $languageArray['admin.header.nav.child_panels'] ?? 'Child Panels' ?> 
 
 <?php if( countRow(['table'=>'child_panels','where'=>['panel_status'=>'pending']]) ): ?> 
 
@@ -151,8 +168,8 @@ echo "<li class='nav-dark-mode'><a href='/admin?theme=2&refer=".$e."'><i class='
 endif;
 ?>
 
-<li class='<?php if( route(1) == 'account' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/account') ?>'><i class='fa fa-user-circle'></i> Admin</a></li>      
-<li><a href='<?php echo site_url('logout') ?>'><i class='fa fa-sign-out'></i> Logout </a></li></ul>        
+<li class='<?php if( route(1) == 'account' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/account') ?>'><i class='fa fa-user-circle'></i> <?= $languageArray['admin.header.nav.admin'] ?? 'Admin' ?></a></li>      
+<li><a href='<?php echo site_url('logout') ?>'><i class='fa fa-sign-out'></i> <?= $languageArray['admin.header.nav.logout'] ?? 'Logout' ?> </a></li></ul>        
 </div>
 </div>
 

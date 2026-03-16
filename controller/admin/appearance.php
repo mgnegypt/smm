@@ -12,7 +12,15 @@
     unset($_SESSION["client"]);
   endif;
 
-  $menuList = ["Pages"=>"pages","Announcements"=>"news","Blog"=>"blog","Menu"=>"menu","Themes"=>"themes","Languages"=>"language","Folders"=>"files"];
+  $menuList = [
+    $languageArray["admin.appearance.menu.pages"] ?? "Pages" => "pages",
+    $languageArray["admin.appearance.menu.announcements"] ?? "Announcements" => "news",
+    $languageArray["admin.appearance.menu.blog"] ?? "Blog" => "blog",
+    $languageArray["admin.appearance.menu.menu"] ?? "Menu" => "menu",
+    $languageArray["admin.appearance.menu.themes"] ?? "Themes" => "themes",
+    $languageArray["admin.appearance.menu.languages"] ?? "Languages" => "language",
+    $languageArray["admin.appearance.menu.folders"] ?? "Folders" => "files"
+  ];
 
   if( !array_search(route(2),$menuList) ):
     header("Location:".site_url("admin/appearance"));

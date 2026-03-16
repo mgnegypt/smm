@@ -42,7 +42,7 @@ if(route(1) == "mail" && $_POST && $user["mail_verify"] != 2):
         $token   = CreateApiKey($_POST);
         $token .=  substr(md5(microtime()),rand(0,26),5);
         
-          $send = sendMail(["subject"=>"Hesabınızı doğrulayın.","body"=>"Doğrulama linkiniz : ".site_url('verify/'.$token),"mail"=>$row["email"]]);
+          $send = sendMail(["subject"=>$languageArray["panel.verify.notification.subject"] ?? "Verify your account.","body"=>($languageArray["panel.verify.notification.body"] ?? "Your verification link: ").site_url('verify/'.$token),"mail"=>$row["email"]]);
   
         if( $send ):  
 
@@ -72,7 +72,7 @@ elseif(route(1) == "sms" && $_POST && $user["sms_verify"] != 2):
         $token   = CreateApiKey($_POST);
         $token .=  substr(md5(microtime()),rand(0,26),5);
      
-      $send = SMSUser($user["telephone"],"Doğrulama linkiniz : ".site_url('verify/'.$token));
+      $send = SMSUser($user["telephone"],($languageArray["panel.verify.notification.body"] ?? "Your verification link: ").site_url('verify/'.$token));
 
         if( $send ):  
 
@@ -83,7 +83,7 @@ elseif(route(1) == "sms" && $_POST && $user["sms_verify"] != 2):
           $successText= $languageArray["error.verify.success"];
          else:
           $error      = 1;
-          $errorText  = 'Basarisiz'.$languageArray["error.verify.fail"];
+          $errorText  = ($languageArray["panel.verify.error.prefix"] ?? "Verification failed: ").$languageArray["error.verify.fail"];
         endif;
   
       endif;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% for lang in site['languages'] %}
 {% if lang['active'] %}
-<html lang="{{ lang['code'] }}">
+<html lang="{{ lang['code'] }}" dir="{{ lang['code'] in ['ar','he','fa','ur'] ? 'rtl' : 'ltr' }}">
 {% endif %}
 {% endfor %}
 <head>
@@ -52,7 +52,7 @@
         
     
     <div class="fixed-footer">
-            <h4 style="color:#000">Choose Theme: 
+            <h4 style="color:#000">{{ lang['panel.layout.demo.choose_theme'] }} 
                 
                    {% for thm in site['themes'] %}
 <a href="/select-theme/{{thm['dirname']}}" style="color:blue;margin:0 10px;font-size:16px">[ {{thm['name']}} ]</a>
