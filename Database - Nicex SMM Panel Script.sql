@@ -485,6 +485,9 @@ CREATE TABLE `notifications` (
   `client_id` int(11) NOT NULL,
   `title` text NOT NULL,
   `content` text NOT NULL,
+  `type` varchar(50) NOT NULL DEFAULT 'general',
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `read_at` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -1125,7 +1128,9 @@ ALTER TABLE `news`
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `client_id` (`client_id`),
+  ADD KEY `is_read` (`is_read`);
 
 --
 -- Indexes for table `orders`

@@ -1,0 +1,60 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">{{ lang['notifications.title'] ?? 'All Notifications' }}</h4>
+        </div>
+        <div class="card-body">
+          {% if notifications is empty %}
+            <div class="alert alert-info mb-0">{{ lang['notifications.empty'] ?? 'No notifications yet.' }}</div>
+          {% else %}
+            <div class="list-group">
+              {% for notification in notifications %}
+                <div class="list-group-item d-flex justify-content-between align-items-start {% if not notification['is_read'] %}font-weight-bold{% endif %}">
+                  <div>
+                    <div class="mb-1">{{ notification['title'] }}</div>
+                    <div class="text-muted small mb-1">{{ notification['content'] }}</div>
+                    <span class="badge badge-secondary">{{ notification['type'] }}</span>
+                  </div>
+                  <div class="text-right small text-muted">
+                    <div>{{ notification['created_at'] }}</div>
+                    {% if notification['is_read'] %}
+                      <div>{{ lang['notifications.read_at'] ?? 'Read at' }}: {{ notification['read_at'] }}</div>
+                    {% else %}
+                      <div>{{ lang['notifications.unread'] ?? 'Unread' }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if paginationArr['count'] > 1 %}
+      <nav>
+        <ul class="pagination">
+          {% if paginationArr['current'] != 1 %}
+            <li class="page-item"><a class="page-link" href="/notifications/1">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="/notifications/{{ paginationArr['previous'] }}">&lsaquo;</a></li>
+          {% endif %}
+
+          {% for page in 1..paginationArr['count'] %}
+            {% if page >= (paginationArr['current']-4) and page <= (paginationArr['current']+4) %}
+              <li class="page-item {% if page == paginationArr['current'] %}active{% endif %}">
+                <a class="page-link" href="/notifications/{{ page }}">{{ page }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          {% if paginationArr['current'] != paginationArr['count'] %}
+            <li class="page-item"><a class="page-link" href="/notifications/{{ paginationArr['next'] }}">&rsaquo;</a></li>
+            <li class="page-item"><a class="page-link" href="/notifications/{{ paginationArr['count'] }}">&raquo;</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>

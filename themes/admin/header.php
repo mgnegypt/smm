@@ -76,6 +76,7 @@ echo title2($adminLangCode,route(1));
 <?php if( $user['access']['admin_access']  && $_SESSION['neira_adminlogin']  ): ?>
 <?php if( $user['access']['users'] ): ?>
 <li class='<?php if( route(1) == 'clients' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/clients') ?>'><i class='fa fa-users'></i> <?= $languageArray['admin.header.nav.users'] ?? 'Users' ?></a></li>
+<li class='<?php if( route(1) == 'notifications' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/notifications') ?>'><i class='fa fa-bell'></i> <?= $languageArray['admin.header.nav.notifications'] ?? 'Notifications' ?></a></li>
 <?php endif; ?>  
 <?php if( $user['access']['orders'] ): ?>    
 <li class='<?php if( route(1) == 'orders' ): echo 'active'; endif; ?>'><a href='<?php echo site_url('admin/orders') ?>'><i class='fa fa-shopping-cart'></i> <?= $languageArray['admin.header.nav.orders'] ?? 'Orders' ?></a></li>

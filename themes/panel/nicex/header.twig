@@ -179,6 +179,12 @@
 					</a>
 				</li>					
 				{% endif %}					
+				<li {% if active_menu == "notifications" %} class="active" {% endif %}>
+					<a href="/notifications" class="menu-link">
+						<i class="menu-icon ri-notification-3-line"></i>
+						<span class="menu-text">{{ lang['notifications.title'] ?? 'Notifications' }}</span>
+					</a>
+				</li>
 				{% if blogPage %}  
 				<li {% if active_menu == "blog" %} class="active" {% endif %}>
 					<a href="/blog" class="menu-link">                        
@@ -252,6 +258,21 @@
 				
 				
                 <div class="col-auto align-self-center">
+                    <div class="header-notification-wrap" style="display:inline-block;position:relative;">
+                      <a class="header-btn" href="#" id="notificationBellToggle">
+                        <span class="icon logout2" style="position:relative;">
+                          <i class="ri-notification-3-line"></i>
+                          <span id="notificationUnreadBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;line-height:16px;border-radius:8px;background:#ff4d6d;color:#fff;font-size:10px;text-align:center;padding:0 4px;"></span>
+                        </span>
+                      </a>
+                      <div id="notificationDropdown" style="display:none;position:absolute;right:0;top:42px;width:360px;max-width:90vw;background:#151a2d;border:1px solid rgba(255,255,255,.12);border-radius:10px;z-index:9999;">
+                        <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;">
+                          <strong>{{ lang['notifications.title'] ?? 'Notifications' }}</strong>
+                          <a href="/notifications" style="font-size:12px;">{{ lang['notifications.view_all'] ?? 'View all' }}</a>
+                        </div>
+                        <div id="notificationDropdownList" style="max-height:320px;overflow:auto;"></div>
+                      </div>
+                    </div>
                     
                      <a class="header-btn currency-btn" style="cursor:pointer">
                         <span class="icon logout2">
@@ -370,6 +391,105 @@
 <script src="https://unpkg.com/wavesurfer.js"></script>
 
 <script>
+
+ function escapeHtml(value){
+   return String(value || '')
+     .replace(/&/g, '&amp;')
+     .replace(/</g, '&lt;')
+     .replace(/>/g, '&gt;')
+     .replace(/"/g, '&quot;')
+     .replace(/'/g, '&#039;');
+ }
+
+ function updateNotificationBadge(unread){
+   var badge = document.getElementById('notificationUnreadBadge');
+   if(!badge){ return; }
+   if(unread > 0){
+     badge.style.display = 'inline-block';
+     badge.innerText = unread > 99 ? '99+' : unread;
+   }else{
+     badge.style.display = 'none';
+   }
+ }
+
+ function renderNotificationList(items){
+   var box = document.getElementById('notificationDropdownList');
+   if(!box){ return; }
+   if(!items || !items.length){
+     box.innerHTML = '<div style="padding:12px;color:#a6b1d3;">{{ lang['notifications.empty'] ?? 'No notifications yet.' }}</div>';
+     return;
+   }
+
+   var html = '';
+   for(var i=0;i<items.length;i++){
+     var item = items[i];
+     var weight = Number(item.is_read) === 1 ? 'normal' : '600';
+     html += '<a href="/notifications" class="notif-item" data-id="'+item.id+'" style="display:block;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);text-decoration:none;color:#d8ddf2;">'
+          + '<div style="font-weight:'+weight+';margin-bottom:2px;">'+escapeHtml(item.title)+'</div>'
+          + '<div style="font-size:12px;color:#a6b1d3;">'+escapeHtml(item.content)+'</div>'
+          + '<div style="font-size:11px;color:#7f89af;margin-top:4px;">'+escapeHtml(item.created_at)+'</div>'
+          + '</a>';
+   }
+   box.innerHTML = html;
+ }
+
+ function loadNotifications(){
+   fetch('/notifications/api?page=1&limit=8')
+     .then(function(res){ return res.json(); })
+     .then(function(data){
+       if(!data || !data.success){ return; }
+       renderNotificationList(data.items || []);
+       updateNotificationBadge(Number(data.unread || 0));
+     });
+ }
+
+ function markNotificationsRead(notificationId){
+   var formData = new URLSearchParams();
+   if(notificationId){ formData.append('id', notificationId); }
+
+   fetch('/notifications/mark-read', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+     body: formData.toString()
+   })
+   .then(function(res){ return res.json(); })
+   .then(function(data){
+     if(data && data.success){
+       updateNotificationBadge(Number(data.unread || 0));
+     }
+   });
+ }
+
+ document.addEventListener('DOMContentLoaded', function(){
+   var bell = document.getElementById('notificationBellToggle');
+   var dropdown = document.getElementById('notificationDropdown');
+   if(bell && dropdown){
+     loadNotifications();
+
+     bell.addEventListener('click', function(e){
+       e.preventDefault();
+       var isOpen = dropdown.style.display === 'block';
+       dropdown.style.display = isOpen ? 'none' : 'block';
+       if(!isOpen){
+         loadNotifications();
+         markNotificationsRead();
+       }
+     });
+
+     document.addEventListener('click', function(e){
+       if(!dropdown.contains(e.target) && !bell.contains(e.target)){
+         dropdown.style.display = 'none';
+       }
+     });
+
+     dropdown.addEventListener('click', function(e){
+       var row = e.target.closest('.notif-item');
+       if(row && row.dataset.id){
+         markNotificationsRead(row.dataset.id);
+       }
+     });
+   }
+ });
 
 
  $('.langs-btn').hover(function(){
