@@ -124,7 +124,7 @@ if($_SESSION["neira_userlogin"] == 1 ):
       $o["id"]    = htmlentities($order["order_id"]);
       $o["date"]  = date("Y-m-d H:i:s", (strtotime($order["order_create"])+$user["timezone"]));
       $o["link"]    = htmlentities($order["order_url"]);
-      $o["charge"]  = htmlentities($order["order_charge"]);
+      $o["charge"]  = formatCurrencyAmount($order["order_charge"] * ($currency["value"] ?? 1), $currency);
       $o["start_count"]  = htmlentities($order["order_start"]);
       $o["quantity"]  = htmlentities($order["order_quantity"]);
       $o["service"]  = htmlentities($order["service_name"]);

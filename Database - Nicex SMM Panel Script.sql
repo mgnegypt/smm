@@ -252,7 +252,8 @@ CREATE TABLE `currency` (
 
 INSERT INTO `currency` (`id`, `symbol`, `value`, `name`, `status`, `default`, `nouse`) VALUES
 (2, '₹', 78, 'INR', '1', '2', '2'),
-(12, '$', 1, 'USD', '1', '2', '2');
+(12, '$', 1, 'USD', '1', '2', '2'),
+(13, 'E£', 1, 'EGP', '1', '1', '2');
 
 -- --------------------------------------------------------
 
@@ -879,7 +880,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `site_logo`, `site_name`, `site_title`, `site_description`, `site_keywords`, `site_currency`, `favicon`, `site_language`, `site_theme`, `site_timezone`, `max_ticket`, `skype_area`, `name_secret`, `recaptcha`, `recaptcha_key`, `recaptcha_secret`, `custom_header`, `custom_footer`, `ticket_system`, `register_page`, `terms_checkbox`, `service_speed`, `service_list`, `dolar_charge`, `euro_charge`, `smtp_user`, `smtp_pass`, `smtp_server`, `smtp_port`, `smtp_protocol`, `alert_type`, `alert_newmanuelservice`, `alert_newticket`, `alert_apibalance`, `alert_newpayment`, `alert_newbankpayment`, `alert_serviceapialert`, `alert_failorder`, `admin_mail`, `resetpass_page`, `resetpass_email`, `site_maintenance`, `site_frozen`, `sms_provider`, `sms_title`, `sms_user`, `sms_pass`, `admin_telephone`, `resetpass_sms`, `panel_selling`, `panel_price`, `free_balance`, `free_amount`, `referral`, `ref_bonus`, `ref_max`, `ref_type`, `cache`, `cache_time`, `guard_system_status`, `guard_services_status`, `guard_services_type`, `guard_notify_status`, `guard_notify_type`, `guard_roles_status`, `guard_roles_type`, `guard_apikey_type`, `neworder_terms`, `guard_cron_system`, `secret_key`, `avarage`, `sms_verify`, `mail_verify`, `ser_sync`, `auto_refill`, `fundstransfer_fees`, `panner_confirmation`, `banner_text_ar`, `banner_text_en`, `banner_url`, `notifacon_popup`, `notifications_message`, `notifications_url`, `notifications_url_text`, `enable_transfer_funds`, `music_url`, `demo_mode`) VALUES
-(1, '', 'NiceX', 'NiceX SMM', 'NiceX SMM  - \nGrow Your Business', 'NiceX SMM  - Top SMM Panel Script', '12', '', 'EN', 'nicex', 9000, 1, '1', '2', '1', '', '', '', '', '2', '2', 2, '1', '2', 1, 1, '', '', '', '587', 'tls', '2', '2', '2', '2', '2', '2', '2', '2', '', '2', '2', '2', 2, 'netgsm', '', '', '', '', '1', 2, 10, 2, 0, '2', 10, 100, '0', 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 1, '', 2, 1, 1, 1, '2', '3', '2', 'NiceX', 'NiceX', '', '2', '', '', '', 1, '', 986);
+(1, '', 'NiceX', 'NiceX SMM', 'NiceX SMM  - \nGrow Your Business', 'NiceX SMM  - Top SMM Panel Script', '13', '', 'EN', 'nicex', 9000, 1, '1', '2', '1', '', '', '', '', '2', '2', 2, '1', '2', 1, 1, '', '', '', '587', 'tls', '2', '2', '2', '2', '2', '2', '2', '2', '', '2', '2', '2', 2, 'netgsm', '', '', '', '', '1', 2, 10, 2, 0, '2', 10, 100, '0', 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 1, '', 2, 1, 1, 1, '2', '3', '2', 'NiceX', 'NiceX', '', '2', '', '', '', 1, '', 986);
 
 -- --------------------------------------------------------
 

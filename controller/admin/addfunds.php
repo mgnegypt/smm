@@ -1047,7 +1047,7 @@ elseif($method_id==19):
             'reference' => $paymentCode,
             'amount' => [
                 "total"=> $opay_amount,
-                "currency"=> 'EGP',
+                "currency"=> paymentGatewayCurrencyCode($extra),
             ],
             'returnUrl' => site_url(),
             'callbackUrl'=> site_url('payment/opay'),
@@ -1230,7 +1230,7 @@ elseif($method_id==19):
                $data = [
              'pri_key'     => $private_key,
             'amount'      => $paid_amount,
-            'currency'    => 'USD',
+            'currency'    => paymentGatewayCurrencyCode($extra),
             'order_id'    => $paymentCode,
             'success_url' => site_url('payment/youcan'),
             'error_url'   =>site_url('payment/youcan'),
@@ -1443,7 +1443,7 @@ elseif($method_id == 23):
         $is_demo = $extra["is_demo"];
         $data_mode =  $is_demo ? 'test' : 'live';
                 
-    $currency = "EGP";
+    $currency = paymentGatewayCurrencyCode($extra);
     
     $paid_amount = $amount;
     $amount = $amount * ($extra['dollar_rate'] ?? 1);

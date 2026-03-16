@@ -705,16 +705,55 @@ function monthOrders($month, $year, $extra = NULL)
     $last = $year . "-" . $month . "-31 23:59:59";
     return $row = $conn->query("SELECT order_id FROM orders WHERE order_create<='" . $last . "' && order_create>='" . $first . "' " . $where . " ")->rowCount();
 }
-function priceFormat($price)
+function priceFormat($price, $decimals = 2, $decimalSeparator = ".", $thousandSeparator = ",")
 {
-    $priceExplode = explode(".", $price);
-    if ($priceExplode[1]) {
-        if (strlen($priceExplode[1]) == 1) {
-            return $price . "0";
-        }
-        return $price;
+    return number_format((float) $price, (int) $decimals, $decimalSeparator, $thousandSeparator);
+}
+
+function getSystemCurrency($fallback = ["name" => "EGP", "symbol" => "EGP", "value" => 1])
+{
+    global $conn, $settings;
+    $currency = false;
+
+    if (!empty($settings["site_currency"])) {
+        $currencyQ = $conn->prepare("SELECT * FROM currency WHERE id=:id LIMIT 1");
+        $currencyQ->execute(["id" => $settings["site_currency"]]);
+        $currency = $currencyQ->fetch(PDO::FETCH_ASSOC);
     }
-    return $price . ".00";
+
+    if (!$currency) {
+        $defaultQ = $conn->prepare("SELECT * FROM currency WHERE `default`=:is_default LIMIT 1");
+        $defaultQ->execute(["is_default" => 1]);
+        $currency = $defaultQ->fetch(PDO::FETCH_ASSOC);
+    }
+
+    if (!$currency) {
+        $currency = $fallback;
+    }
+
+    return $currency;
+}
+
+function formatCurrencyAmount($amount, $currency = null, $decimals = 2)
+{
+    if (!$currency) {
+        $currency = getSystemCurrency();
+    }
+
+    $symbol = !empty($currency["symbol"]) ? $currency["symbol"] : (!empty($currency["name"]) ? $currency["name"] : "EGP");
+    return trim($symbol . " " . priceFormat($amount, $decimals));
+}
+
+function paymentGatewayCurrencyCode($extra = [])
+{
+    $systemCurrency = getSystemCurrency();
+    if (!empty($extra["currency"])) {
+        return strtoupper(trim($extra["currency"]));
+    }
+    if (!empty($systemCurrency["name"])) {
+        return strtoupper(trim($systemCurrency["name"]));
+    }
+    return "EGP";
 }
 function title2($lang = "tr", $key, $key2 = "")
 {
